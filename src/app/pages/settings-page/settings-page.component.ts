@@ -1,4 +1,5 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {TitleService} from '../../services/title-service/title.service';
 
 @Component({
   selector: 'app-settings-page',
@@ -8,10 +9,10 @@ import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 })
 export class SettingsPageComponent implements OnInit {
 
-  constructor() {
+  constructor(private readonly titleService: TitleService) {
   }
 
   ngOnInit(): void {
+    this.titleService.title = "Settings";
   }
-
 }

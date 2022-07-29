@@ -11,6 +11,8 @@ import {EffectsModule} from '@ngrx/effects';
 import {HomePageComponent} from './pages/home-page/home-page.component';
 import {NotFoundPageComponent} from './pages/not-found-page/not-found-page.component';
 import {SettingsPageComponent} from './pages/settings-page/settings-page.component';
+import {StoreDevtoolsModule} from '@ngrx/store-devtools';
+import {environment} from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -27,6 +29,10 @@ import {SettingsPageComponent} from './pages/settings-page/settings-page.compone
     MaterialCommonModule,
     StoreModule.forRoot({}, {}),
     EffectsModule.forRoot([]),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25, // Retains last 25 states
+      logOnly: environment.production, // Restrict extension to log-only mode
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent]

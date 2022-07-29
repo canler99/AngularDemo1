@@ -1,0 +1,13 @@
+<mat-selection-list #friends [multiple]="false">
+    <ng-container *ngFor="let friend of friends$ | async">
+        <mat-list-option [value]="friend.id">
+            {{friend.name}}
+        </mat-list-option>
+        <mat-divider></mat-divider>
+    </ng-container>
+    <ng-container *ngIf="isSpinnerVisible | async">
+        <div class="spinner-container">
+            <mat-spinner diameter="20"></mat-spinner>
+        </div>
+    </ng-container>
+</mat-selection-list>

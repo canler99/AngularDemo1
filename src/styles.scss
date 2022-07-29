@@ -8,3 +8,8 @@ body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+
+.main-page-container {
+  margin: 0.5rem;
+  height: calc(100% - 80px);
+}

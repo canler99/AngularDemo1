@@ -5,8 +5,8 @@ import {NotFoundPageComponent} from './pages/not-found-page/not-found-page.compo
 import {SettingsPageComponent} from './pages/settings-page/settings-page.component';
 
 const routes: Routes = [
-  {path: '', component: HomePageComponent, title: 'Home',},
-  {path: 'settings', component: SettingsPageComponent, title: 'Settings',},
+  {path: '', component: HomePageComponent, title: 'FriendsApp | Home',},
+  {path: 'settings', component: SettingsPageComponent, title: 'FriendsApp | Settings',},
   {path: 'friends', loadChildren: () => import('./features/friends/friends.module').then(m => m.FriendsModule)},
   //{ path: '',   redirectTo: '/home', pathMatch: 'full' },
   {path: '**', component: NotFoundPageComponent},

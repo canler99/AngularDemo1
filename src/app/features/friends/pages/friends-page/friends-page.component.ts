@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {TitleService} from '../../../../services/title-service/title.service';
 
 @Component({
   selector: 'app-friends-page',
@@ -7,10 +8,10 @@ import {Component, OnInit} from '@angular/core';
 })
 export class FriendsPageComponent implements OnInit {
 
-  constructor() {
+  constructor(private readonly titleService: TitleService) {
   }
 
   ngOnInit(): void {
+    this.titleService.title = "Friends";
   }
-
 }

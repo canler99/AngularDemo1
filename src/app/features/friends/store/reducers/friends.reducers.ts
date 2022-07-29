@@ -15,7 +15,7 @@ export const friendsReducer = createReducer(
     on(actions.loadFriendPageSucess, (state, {page, pageSize, friendsReceived}) => ({
         ...state,
         loading: false,
-        orders: [...state.friends, ...friendsReceived],
+        friends: [...state.friends, ...friendsReceived],
         currentPage: page,
         pageSize
     })),

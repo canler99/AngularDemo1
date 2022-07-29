@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Observable, of} from 'rxjs';
+import {delay, Observable, of} from 'rxjs';
 import {Friend} from '../models/friends.types';
 
 @Injectable({
@@ -26,6 +26,8 @@ export class FriendsApiService {
     }
 
     getFriendsPage$(page: number = 0, pageSize: number = 10): Observable<Friend[]> {
-        return of(this._friendsRoot.slice(page * pageSize, (page + 1) * pageSize));
+        return of(this._friendsRoot.slice(page * pageSize, (page + 1) * pageSize)).pipe(
+            delay(2000),
+        );
     }
 }
