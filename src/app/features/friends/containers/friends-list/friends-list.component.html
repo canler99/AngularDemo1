@@ -1,13 +1,18 @@
-<mat-selection-list #friends [multiple]="false">
+<mat-selection-list [multiple]="false">
     <ng-container *ngFor="let friend of friends$ | async">
         <mat-list-option [value]="friend.id">
             {{friend.name}}
         </mat-list-option>
         <mat-divider></mat-divider>
     </ng-container>
-    <ng-container *ngIf="isSpinnerVisible | async">
-        <div class="spinner-container">
+    <ng-container *ngIf="(isLoading$ | async)">
+        <div class="list-control-centering-container">
             <mat-spinner diameter="20"></mat-spinner>
+        </div>
+    </ng-container>
+    <ng-container>
+        <div class="list-control-centering-container">
+            <button (click)="loadNextPageClicked()" color="primary" mat-raised-button>Load more...</button>
         </div>
     </ng-container>
 </mat-selection-list>

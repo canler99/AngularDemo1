@@ -2,6 +2,11 @@ import {Injectable} from '@angular/core';
 import {delay, Observable, of} from 'rxjs';
 import {Friend} from '../models/friends.types';
 
+export interface getFriendsPageAPIResponse {
+    friends: Friend[];
+    pageCount: number;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -25,8 +30,11 @@ export class FriendsApiService {
         }
     }
 
-    getFriendsPage$(page: number = 0, pageSize: number = 10): Observable<Friend[]> {
-        return of(this._friendsRoot.slice(page * pageSize, (page + 1) * pageSize)).pipe(
+    getFriendListNextPage$(page: number = 0, pageSize: number = 10): Observable<getFriendsPageAPIResponse> {
+        return of({
+            friends: this._friendsRoot.slice(page * pageSize, (page + 1) * pageSize),
+            pageCount: this._friendsRoot.length / pageSize
+        }).pipe(
             delay(2000),
         );
     }

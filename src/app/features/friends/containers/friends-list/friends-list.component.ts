@@ -1,7 +1,9 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {BehaviorSubject, Observable, of, switchMap, tap} from 'rxjs';
+import {Observable, of, switchMap} from 'rxjs';
 import {Friend} from '../../models/friends.types';
 import {FriendsService} from '../../services/friends.service';
+import {ListContext} from '../../store/friends-store.types';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-friends-list',
@@ -10,19 +12,21 @@ import {FriendsService} from '../../services/friends.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FriendsListComponent implements OnInit {
-
-  private _isSpinnerVisible: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
-  protected isSpinnerVisible = this._isSpinnerVisible.asObservable();
-
-  protected friends$: Observable<Friend[]> = of("").pipe(
-      tap(_ => this._isSpinnerVisible.next(true)),
-      switchMap(() => this.friendsService.getFriendsPage$()),
-      tap(_ => this._isSpinnerVisible.next(true)),
+  protected isLoading$ = this.friendsService.getFriendsListContext$().pipe(
+      map((context: ListContext) => context.loading)
   );
 
-  constructor(private readonly friendsService: FriendsService) {
+  protected friends$: Observable<Friend[]> = of("").pipe(
+      switchMap(() => this.friendsService.getFriendsPage$()),
+  );
+
+  constructor(protected readonly friendsService: FriendsService) {
   }
 
   ngOnInit(): void {
+  }
+
+  loadNextPageClicked() {
+    this.friendsService.loadFriendListNextPage(10);
   }
 }

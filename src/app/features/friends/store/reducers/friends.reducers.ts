@@ -3,21 +3,29 @@ import {FriendsState} from '../friends-store.types';
 import * as actions from '../actions/friends.actions';
 
 export const initialState: FriendsState = {
-    currentPage: 0,
-    pageSize: 0,
     friends: [],
-    loading: true
+    listContext: {
+        currentPage: 0,
+        pageSize: 0,
+        loading: true,
+        pageCount: 0,
+    }
 };
 
 export const friendsReducer = createReducer(
     initialState,
-    on(actions.loadFriendPage, (state) => ({...state, loading: true})),
-    on(actions.loadFriendPageSucess, (state, {page, pageSize, friendsReceived}) => ({
+    on(actions.loadFriendListNextPage, (state) => ({
         ...state,
-        loading: false,
-        friends: [...state.friends, ...friendsReceived],
-        currentPage: page,
-        pageSize
+        listContext: {...state.listContext, loading: true},
     })),
-    on(actions.loadFriendPageError, (state, error) => ({...state, loading: false, error})),
+    on(actions.loadFriendListNextPageSuccess, (state, {currentPage, pageSize, pageCount, friendsReceived}) => ({
+        ...state,
+        listContext: {currentPage, pageSize, pageCount, loading: false},
+        friends: [...state.friends, ...friendsReceived],
+    })),
+    on(actions.loadFriendListNextPageError, (state, error) => ({
+        ...state,
+        listContext: {...state.listContext, loading: false, error},
+        loading: false,
+    })),
 );

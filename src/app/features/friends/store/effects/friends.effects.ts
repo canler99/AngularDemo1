@@ -1,20 +1,23 @@
 import {Injectable} from "@angular/core";
 import {Actions, createEffect, ofType} from "@ngrx/effects";
-import {map, mergeMap} from "rxjs";
+import {map, mergeMap, withLatestFrom} from "rxjs";
 import * as FriendsActions from '../actions/friends.actions';
-import {FriendsApiService} from '../../services/friends-api.service';
-import {Friend} from '../../models/friends.types';
+import {FriendsApiService, getFriendsPageAPIResponse} from '../../services/friends-api.service';
+import {Store} from '@ngrx/store';
+import * as selectors from '../selectors/friends.selectors';
 
 @Injectable()
 export class FriendsEffects {
 
     loadFriends$ = createEffect(() => this.actions$.pipe(
-        ofType(FriendsActions.loadFriendPage),
-        mergeMap(action => this.friendsApiService.getFriendsPage$(action.page, action.pageSize).pipe(
-            map((friends: Friend[]) => FriendsActions.loadFriendPageSucess({
-                page: action.page,
+        ofType(FriendsActions.loadFriendListNextPage),
+        withLatestFrom(this.store.select(selectors.selectFriendListCurrentPage)),
+        mergeMap(([action, currentPage]) => this.friendsApiService.getFriendListNextPage$(currentPage + 1, action.pageSize).pipe(
+            map((apiResult: getFriendsPageAPIResponse) => FriendsActions.loadFriendListNextPageSuccess({
+                currentPage: action.page,
                 pageSize: action.pageSize,
-                friendsReceived: friends
+                friendsReceived: apiResult.friends,
+                pageCount: apiResult.pageCount,
             })),
             // TODO: implement proper error handling
             //catchError(({ code, description }) => FriendsActions.loadFriendPageError({ code, description }))
@@ -23,6 +26,7 @@ export class FriendsEffects {
 
     constructor(
         private readonly actions$: Actions,
+        private readonly store: Store,
         private readonly friendsApiService: FriendsApiService
     ) {
     }
