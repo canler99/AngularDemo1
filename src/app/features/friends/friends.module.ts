@@ -10,11 +10,13 @@ import {friendsReducer} from './store/reducers/friends.reducers';
 import {FriendsEffects} from './store/effects/friends.effects';
 import {friendsFeatureKey} from './store/friends-store.types';
 import {MaterialCommonModule} from '../../material.module';
+import {FriendDetailsComponent} from './components/friend-details/friend-details.component';
 
 @NgModule({
   declarations: [
     FriendsPageComponent,
-    FriendsListComponent
+    FriendsListComponent,
+    FriendDetailsComponent
   ],
   imports: [
     CommonModule,

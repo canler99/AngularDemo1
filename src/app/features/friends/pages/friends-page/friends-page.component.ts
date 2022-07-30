@@ -1,5 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {TitleService} from '../../../../services/title-service/title.service';
+import {ActivatedRoute, Router} from '@angular/router';
+import {Friend} from '../../models/friends.types';
 
 @Component({
   selector: 'app-friends-page',
@@ -8,10 +10,23 @@ import {TitleService} from '../../../../services/title-service/title.service';
 })
 export class FriendsPageComponent implements OnInit {
 
-  constructor(private readonly titleService: TitleService) {
+  constructor(
+      private readonly titleService: TitleService,
+      private readonly router: Router,
+      private readonly route: ActivatedRoute
+  ) {
   }
 
   ngOnInit(): void {
     this.titleService.title = "Friends";
+  }
+
+  friendSelectedEvent(selectedFriend: Friend | {}) {
+    //console.log("Friends page ", selectedFriend);
+    this.router.navigate(['details', (selectedFriend as Friend)?.id], {
+      relativeTo: this.route,
+      state: selectedFriend
+    }).then(r => {
+    });
   }
 }

@@ -21,7 +21,7 @@ export class FriendsApiService {
     generateInitialFriendList() {
         for (let i = 0; i < 30; i++) {
             this._friendsRoot.push({
-                id: i.toString(),
+                id: (i + 100).toString(),
                 name: `John Smith-${i + 1}`,
                 age: 10 + i,
                 weight: 80 + i,
@@ -30,12 +30,18 @@ export class FriendsApiService {
         }
     }
 
-    getFriendListNextPage$(page: number = 0, pageSize: number = 10): Observable<getFriendsPageAPIResponse> {
+    getFriendListPage$(page: number = 0, pageSize: number = 10): Observable<getFriendsPageAPIResponse> {
+        const pageCount = this._friendsRoot.length / pageSize;
+
+        if (page > pageCount) {
+            throw {code: '001', description: 'Invalid page number requested'}
+        }
+
         return of({
-            friends: this._friendsRoot.slice(page * pageSize, (page + 1) * pageSize),
-            pageCount: this._friendsRoot.length / pageSize
+            friends: this._friendsRoot.slice((page - 1) * pageSize, page * pageSize),
+            pageCount
         }).pipe(
-            delay(2000),
+            delay(1000),
         );
     }
 }

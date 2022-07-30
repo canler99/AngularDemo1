@@ -3,7 +3,7 @@ import {Friend} from '../../models/friends.types';
 
 export const loadFriendListNextPage = createAction(
     '[Friends Component] load page',
-    props<{ page: number, pageSize: number }>()
+    props<{ pageSize: number }>()
 );
 
 export const loadFriendListNextPageSuccess = createAction(
@@ -14,4 +14,8 @@ export const loadFriendListNextPageSuccess = createAction(
 export const loadFriendListNextPageError = createAction(
     '[Friends Component] load page fail',
     props<{ code: string, description: string }>()
+);
+
+export const loadFriendListAlreadyLoaded = createAction(
+    '[Friends Component] load page list already loaded',
 );
