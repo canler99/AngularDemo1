@@ -16,6 +16,6 @@ export const loadFriendListNextPageError = createAction(
     props<{ code: string, description: string }>()
 );
 
-export const loadFriendListAlreadyLoaded = createAction(
-    '[Friends Component] load page list already loaded',
+export const loadFriendListDone = createAction(
+    '[Friends Component] load page list: no more elements to load',
 );

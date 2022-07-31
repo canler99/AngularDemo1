@@ -22,11 +22,9 @@ export class FriendsPageComponent implements OnInit {
   }
 
   friendSelectedEvent(selectedFriend: Friend | {}) {
-    //console.log("Friends page ", selectedFriend);
     this.router.navigate(['details', (selectedFriend as Friend)?.id], {
       relativeTo: this.route,
       state: selectedFriend
-    }).then(r => {
     });
   }
 }

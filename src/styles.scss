@@ -13,3 +13,8 @@ body {
   margin: 0.5rem;
   height: calc(100% - 80px);
 }
+
+.right-card {
+  flex-grow: 1;
+  margin-left: 10px;
+}

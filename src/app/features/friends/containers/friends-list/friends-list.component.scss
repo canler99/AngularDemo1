@@ -5,3 +5,7 @@
   margin-top: 30px;
   margin-bottom: 30px;
 }
+
+mat-divider:last-of-type {
+  display: none;
+}

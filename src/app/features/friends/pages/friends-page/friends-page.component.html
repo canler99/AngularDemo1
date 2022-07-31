@@ -1,13 +1,17 @@
 <div class="main-page-container">
     <div class="cards-containers">
         <mat-card class="list-card">
+            <mat-card-title><h2>List</h2></mat-card-title>
             <div class="list-container">
-                <app-friends-list (friendSelectedEvent)="friendSelectedEvent($event)"></app-friends-list>
+                <div class="inner-list-width-controller">
+                    <app-friends-list (friendSelectedEvent)="friendSelectedEvent($event)">
+                    </app-friends-list>
+                </div>
             </div>
         </mat-card>
 
-        <mat-card class="detail-card">
+        <div class="detail-card">
             <router-outlet></router-outlet>
-        </mat-card>
+        </div>
     </div>
 </div>

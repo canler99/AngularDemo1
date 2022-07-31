@@ -7,7 +7,7 @@ export const initialState: FriendsState = {
     listContext: {
         currentPage: 0,
         pageSize: 0,
-        loading: true,
+        loading: false,
         pageCount: 0,
     }
 };
@@ -23,7 +23,7 @@ export const friendsReducer = createReducer(
         listContext: {currentPage, pageSize, pageCount, loading: false},
         friends: [...state.friends, ...friendsReceived],
     })),
-    on(actions.loadFriendListAlreadyLoaded, state => ({
+    on(actions.loadFriendListDone, state => ({
         ...state,
         listContext: {...state.listContext, loading: false},
     })),

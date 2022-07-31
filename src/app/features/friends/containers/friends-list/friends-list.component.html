@@ -5,7 +5,7 @@
         </mat-list-option>
         <mat-divider></mat-divider>
     </ng-container>
-    <ng-container *ngIf="(listcontext$ | async) as listContext">
+    <ng-container *ngIf="(listContext$ | async) as listContext">
 
         <ng-container *ngIf="!!listContext?.loading">
             <div class="list-control-centering-container">
@@ -16,7 +16,7 @@
             <div class="list-control-centering-container">
                 <button
                         (click)="loadNextPageClicked()"
-                        [disabled]="!!listContext?.loading || !!listContext?.error" color="primary"
+                        color="primary"
                         mat-raised-button
                 >
                     Load more...

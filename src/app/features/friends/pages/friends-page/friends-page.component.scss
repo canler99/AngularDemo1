@@ -1,12 +1,10 @@
 .list-card {
   width: 200px;
-  padding: 0px;
-  border: 0px;
+  padding-right: 4px;
 }
 
 .detail-card {
   flex-grow: 1;
-  margin-left: 10px;
 }
 
 .cards-containers {
@@ -18,7 +16,12 @@
 }
 
 .list-container {
+  height: calc(100% - 50px);
   overflow: auto;
-  height: calc(100% - 30px);
-  padding: 10px;
 }
+
+.inner-list-width-controller {
+  margin-right: 20px;
+}
+
+

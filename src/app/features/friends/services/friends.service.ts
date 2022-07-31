@@ -18,8 +18,7 @@ export class FriendsService {
   ) {
   }
 
-  getFriendsPage$(pageSize: number = 10): Observable<Friend[]> {
-    this.loadFriendListNextPage(pageSize);
+  getFriendsList$(pageSize: number = 10): Observable<Friend[]> {
     return this.store.select(selectors.selectFriends);
   }
 
@@ -27,8 +26,11 @@ export class FriendsService {
     return this.store.select(selectors.selectFriendListContext);
   }
 
-  loadFriendListNextPage(pageSize: number) {
-    // TODO: remove unused parameter
+  loadFriendListNextPage(pageSize: number = 10) {
     this.store.dispatch(actions.loadFriendListNextPage({pageSize}));
+  }
+
+  getFriendById$(friendId: string): Observable<Friend> {
+    return this.store.select(selectors.selectFriend, {friendId});
   }
 }

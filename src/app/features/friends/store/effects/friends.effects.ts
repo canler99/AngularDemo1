@@ -25,7 +25,7 @@ export class FriendsEffects {
                     description
                 }))))
             )
-            : of(FriendsActions.loadFriendListAlreadyLoaded())
+            : of(FriendsActions.loadFriendListDone())
         ))
     );
 
