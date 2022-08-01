@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {FriendsApiService} from './friends-api.service';
-import {Observable} from 'rxjs';
+import {Observable, tap} from 'rxjs';
 import {Friend} from '../models/friends.types';
 import * as actions from '../store/actions/friends.actions';
 import * as selectors from '../store/selectors/friends.selectors';
@@ -32,5 +32,17 @@ export class FriendsService {
 
   getFriendById$(friendId: string): Observable<Friend> {
     return this.store.select(selectors.selectFriend, {friendId});
+  }
+
+  updateFriend(friend: Friend): Observable<boolean> {
+    return this.friendsApiService.updateFriend(friend).pipe(
+        tap(() => {
+          // TODO: send action to update the store
+          this.store.dispatch(actions.friendUpdated({friend}));
+
+          // TODO: show toast
+          // TODO: navigate back to details page
+        })
+    );
   }
 }

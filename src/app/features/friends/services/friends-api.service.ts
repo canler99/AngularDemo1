@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {delay, Observable, of} from 'rxjs';
+import {delay, Observable, of, tap} from 'rxjs';
 import {Friend} from '../models/friends.types';
 
 export interface getFriendsPageAPIResponse {
@@ -42,6 +42,20 @@ export class FriendsApiService {
             pageCount
         }).pipe(
             delay(1000),
+        );
+    }
+
+    updateFriend(friend: Friend): Observable<boolean> {
+        const itemIndex = this._friendsRoot.findIndex((item: Friend) => item.id === friend.id);
+        if (itemIndex < 0) {
+            throw {code: '003', description: 'Error trying to update a friend that was not found.'};
+        }
+
+        return of(true).pipe(
+            delay(1000),
+            tap(() => {
+                this._friendsRoot[itemIndex] = friend;
+            })
         );
     }
 }

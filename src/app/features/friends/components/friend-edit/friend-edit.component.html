@@ -1,0 +1,36 @@
+<mat-card class="right-card">
+    <mat-card-header class="card-header">
+        <mat-card-title>
+            <h2>Edit</h2>
+        </mat-card-title>
+        <button (click)="closeBtnClicked()" aria-label="Close" color="primary" mat-icon-button>
+            <mat-icon>close</mat-icon>
+        </button>
+    </mat-card-header>
+    <mat-card-content>
+        <PRE>{{ friend$ | async | json }}</PRE>
+
+        <form (ngSubmit)="onSubmit()" [formGroup]="editFriendForm">
+            <p>
+                <label for="name">Name</label>
+                <input formControlName="name" id="name" name="name" type="text">
+            </p>
+
+            <p>
+                <label for="age">Age</label>
+                <input formControlName="age" id="age" name="age" type="text">
+            </p>
+
+            <p>
+                <label for="weight">Weight</label>
+                <input formControlName="weight" id="weight" name="weight" type="text">
+            </p>
+
+            <p>
+                <button type="submit">Submit</button>
+            </p>
+        </form>
+
+    </mat-card-content>
+</mat-card>
+

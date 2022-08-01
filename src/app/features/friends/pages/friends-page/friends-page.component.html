@@ -1,7 +1,9 @@
 <div class="main-page-container">
     <div class="cards-containers">
         <mat-card class="list-card">
-            <mat-card-title><h2>List</h2></mat-card-title>
+            <mat-card-header class="card-header">
+                <mat-card-title><h2>List</h2></mat-card-title>
+            </mat-card-header>
             <div class="list-container">
                 <div class="inner-list-width-controller">
                     <app-friends-list (friendSelectedEvent)="friendSelectedEvent($event)">

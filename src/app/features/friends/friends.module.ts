@@ -11,19 +11,23 @@ import {FriendsEffects} from './store/effects/friends.effects';
 import {friendsFeatureKey} from './store/friends-store.types';
 import {MaterialCommonModule} from '../../material.module';
 import {FriendDetailsComponent} from './components/friend-details/friend-details.component';
+import {FriendEditComponent} from './components/friend-edit/friend-edit.component';
+import {ReactiveFormsModule} from '@angular/forms';
 
 @NgModule({
   declarations: [
     FriendsPageComponent,
     FriendsListComponent,
-    FriendDetailsComponent
+    FriendDetailsComponent,
+    FriendEditComponent
   ],
   imports: [
     CommonModule,
     MaterialCommonModule,
     FriendsRoutingModule,
     StoreModule.forFeature(friendsFeatureKey, friendsReducer),
-    EffectsModule.forFeature([FriendsEffects])
+    EffectsModule.forFeature([FriendsEffects]),
+    ReactiveFormsModule
   ]
 })
 export class FriendsModule {

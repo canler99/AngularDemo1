@@ -19,3 +19,8 @@ export const loadFriendListNextPageError = createAction(
 export const loadFriendListDone = createAction(
     '[Friends Component] load page list: no more elements to load',
 );
+
+export const friendUpdated = createAction(
+    '[Friends Component] friend updated',
+    props<{ friend: Friend }>()
+);

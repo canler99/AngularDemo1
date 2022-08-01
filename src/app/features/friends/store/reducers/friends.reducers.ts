@@ -1,6 +1,7 @@
 import {createReducer, on} from '@ngrx/store';
 import {FriendsState} from '../friends-store.types';
 import * as actions from '../actions/friends.actions';
+import {Friend} from '../../models/friends.types';
 
 export const initialState: FriendsState = {
     friends: [],
@@ -32,4 +33,13 @@ export const friendsReducer = createReducer(
         listContext: {...state.listContext, loading: false, error},
         loading: false,
     })),
+    on(actions.friendUpdated, (state, {friend}) => {
+        const itemIndex = state.friends.findIndex((item: Friend) => item.id === friend.id);
+        let newFriendList = [...state.friends];
+        if (itemIndex >= 0) {
+            newFriendList[itemIndex] = friend;
+        }
+
+        return {...state, friends: newFriendList};
+    }),
 );
