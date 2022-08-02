@@ -42,12 +42,22 @@ export class FriendEditComponent implements OnInit {
     this.friend$
         .pipe(
             take(1),
-            tap(friend => this.updateFriendFormDataFromModel(friend))
+            tap(friend => this.updateFriendFormDataFromModel(friend)),
+            catchError(error =>
+                of(error).pipe(
+                    tap(() => this.router.navigate(['friends'])),
+                    map(() => null)
+                )
+            )
         )
         .subscribe();
   }
 
   updateFriendFormDataFromModel(friend: Friend) {
+    if (!friend) {
+      throw {code: '004', description: 'Trying to update a null friend.'};
+    }
+
     this.editFriendForm.setValue({
       name: friend.name,
       age: friend.age.toString(),
@@ -66,12 +76,12 @@ export class FriendEditComponent implements OnInit {
     };
   }
 
-  closeBtnClicked() {
-    this.navigateBack();
-  }
-
   onSubmit() {
-    console.log(this.editFriendForm.value);
+    // check if form have not been modified, just go back
+    if (!this.editFriendForm.dirty) {
+      this.navigateBack();
+    }
+
     this._isSpinnerVisibleSubject.next(true);
     this.editFriendForm.disable();
 
@@ -102,6 +112,10 @@ export class FriendEditComponent implements OnInit {
             )
         )
         .subscribe();
+  }
+
+  closeBtnClicked() {
+    this.navigateBack();
   }
 
   navigateBack() {

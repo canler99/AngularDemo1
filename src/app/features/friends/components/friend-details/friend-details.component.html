@@ -3,13 +3,29 @@
     <mat-card-title>
       <h2>Details</h2>
     </mat-card-title>
-    <button
-            (click)="editFriendBtnClicked()"
-            aria-label="Edit..."
-            color="primary"
-            mat-icon-button>
-      <mat-icon>edit</mat-icon>
-    </button>
+    <div>
+      <button
+              (click)="openDialog()"
+              aria-label="Delete..."
+              color="primary"
+              mat-icon-button>
+        <mat-icon>delete</mat-icon>
+      </button>
+      <button
+              (click)="editFriendBtnClicked()"
+              aria-label="Edit..."
+              color="primary"
+              mat-icon-button>
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button
+              (click)="navigateBack()"
+              aria-label="Close"
+              color="primary"
+              mat-icon-button>
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
   </mat-card-header>
   <mat-card-content>
     <ng-container *ngIf="friend$ | async as friend">

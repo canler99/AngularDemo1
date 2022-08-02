@@ -13,6 +13,7 @@ import {MaterialCommonModule} from '../../material.module';
 import {FriendDetailsComponent} from './components/friend-details/friend-details.component';
 import {FriendEditComponent} from './components/friend-edit/friend-edit.component';
 import {ReactiveFormsModule} from '@angular/forms';
+import {ConfirmationDialogComponent} from './components/confirmation-dialog/confirmation-dialog.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import {ReactiveFormsModule} from '@angular/forms';
     FriendsListComponent,
     FriendDetailsComponent,
     FriendEditComponent,
+    ConfirmationDialogComponent,
   ],
   imports: [
     CommonModule,

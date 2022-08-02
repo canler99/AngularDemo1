@@ -17,7 +17,7 @@ export class FriendsListComponent implements OnInit {
   protected listContext$ = this.friendsService.getFriendsListContext$();
 
   protected friends$: Observable<Friend[]> = of('').pipe(
-      switchMap(() => this.friendsService.getFriendsList$())
+    switchMap(() => this.friendsService.getFriendsList$())
   );
 
   constructor(protected readonly friendsService: FriendsService) {
