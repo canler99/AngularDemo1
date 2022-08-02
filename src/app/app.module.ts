@@ -20,7 +20,7 @@ import {environment} from '../environments/environment';
     NavigationComponent,
     HomePageComponent,
     NotFoundPageComponent,
-    SettingsPageComponent
+    SettingsPageComponent,
   ],
   imports: [
     BrowserModule,
@@ -35,7 +35,7 @@ import {environment} from '../environments/environment';
     }),
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {
 }

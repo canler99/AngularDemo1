@@ -8,17 +8,16 @@ import * as selectors from '../store/selectors/friends.selectors';
 import {ListContext} from '../store/friends-store.types';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FriendsService {
-
   constructor(
       private readonly friendsApiService: FriendsApiService,
-      private readonly store: Store,
+      private readonly store: Store
   ) {
   }
 
-  getFriendsList$(pageSize: number = 10): Observable<Friend[]> {
+  getFriendsList$(): Observable<Friend[]> {
     return this.store.select(selectors.selectFriends);
   }
 
@@ -35,14 +34,8 @@ export class FriendsService {
   }
 
   updateFriend(friend: Friend): Observable<boolean> {
-    return this.friendsApiService.updateFriend(friend).pipe(
-        tap(() => {
-          // TODO: send action to update the store
-          this.store.dispatch(actions.friendUpdated({friend}));
-
-          // TODO: show toast
-          // TODO: navigate back to details page
-        })
-    );
+    return this.friendsApiService
+        .updateFriend(friend)
+        .pipe(tap(() => this.store.dispatch(actions.friendUpdated({friend}))));
   }
 }

@@ -1,36 +1,70 @@
 <mat-card class="right-card">
-    <mat-card-header class="card-header">
-        <mat-card-title>
-            <h2>Edit</h2>
-        </mat-card-title>
-        <button (click)="closeBtnClicked()" aria-label="Close" color="primary" mat-icon-button>
-            <mat-icon>close</mat-icon>
-        </button>
-    </mat-card-header>
+  <mat-card-header class="card-header">
+    <mat-card-title>
+      <h2>Edit</h2>
+    </mat-card-title>
+    <button
+            (click)="closeBtnClicked()"
+            aria-label="Close"
+            color="primary"
+            mat-icon-button>
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-card-header>
+  <form (ngSubmit)="onSubmit()" [formGroup]="editFriendForm" novalidate>
     <mat-card-content>
-        <PRE>{{ friend$ | async | json }}</PRE>
+      <div class="row row-large">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <input formControlName="name" matInput placeholder="Name"/>
+            <mat-error
+                    *ngIf="editFriendForm.controls['name'].hasError('required')">
+              First name is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
 
-        <form (ngSubmit)="onSubmit()" [formGroup]="editFriendForm">
-            <p>
-                <label for="name">Name</label>
-                <input formControlName="name" id="name" name="name" type="text">
-            </p>
+      <div class="row row-small">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <input formControlName="age" matInput placeholder="Age"/>
+            <mat-error
+                    *ngIf="editFriendForm.controls['age'].hasError('required')">
+              Age is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
 
-            <p>
-                <label for="age">Age</label>
-                <input formControlName="age" id="age" name="age" type="text">
-            </p>
-
-            <p>
-                <label for="weight">Weight</label>
-                <input formControlName="weight" id="weight" name="weight" type="text">
-            </p>
-
-            <p>
-                <button type="submit">Submit</button>
-            </p>
-        </form>
-
+      <div class="row row-small row-last">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <input formControlName="weight" matInput placeholder="Weight"/>
+            <mat-error
+                    *ngIf="editFriendForm.controls['weight'].hasError('required')">
+              Weight name is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
     </mat-card-content>
+    <mat-card-actions>
+      <div class="button-spinner-container">
+        <mat-spinner
+                *ngIf="(isSpinnerVisible$ | async) === true; else showButton"
+                diameter="20">
+        </mat-spinner>
+        <ng-template #showButton>
+          <button
+                  class="submit-button"
+                  color="primary"
+                  mat-raised-button
+                  type="submit">
+            Submit
+          </button>
+        </ng-template>
+      </div>
+    </mat-card-actions>
+  </form>
 </mat-card>
-

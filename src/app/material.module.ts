@@ -96,8 +96,8 @@ import {LayoutModule} from '@angular/cdk/layout';
         PortalModule,
         ScrollingModule,
         DialogModule,
-        LayoutModule
-    ]
+        LayoutModule,
+    ],
 })
 export class MaterialCommonModule {
 }

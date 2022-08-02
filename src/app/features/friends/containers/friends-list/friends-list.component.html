@@ -1,29 +1,27 @@
-<mat-selection-list (selectionChange)="listSelectionChanged($event)" [multiple]="false">
-    <ng-container *ngFor="let friend of friends$ | async">
-        <mat-list-option [value]="friend">
-            {{friend.name}}
-        </mat-list-option>
-        <mat-divider></mat-divider>
+<mat-selection-list
+        (selectionChange)="listSelectionChanged($event)"
+        [multiple]="false">
+  <ng-container *ngFor="let friend of friends$ | async">
+    <mat-list-option [value]="friend">
+      {{ friend.name }}
+    </mat-list-option>
+    <mat-divider></mat-divider>
+  </ng-container>
+  <ng-container *ngIf="listContext$ | async as listContext">
+    <ng-container *ngIf="!!listContext?.loading">
+      <div class="list-control-centering-container">
+        <mat-spinner diameter="20"></mat-spinner>
+      </div>
     </ng-container>
-    <ng-container *ngIf="(listContext$ | async) as listContext">
-
-        <ng-container *ngIf="!!listContext?.loading">
-            <div class="list-control-centering-container">
-                <mat-spinner diameter="20"></mat-spinner>
-            </div>
-        </ng-container>
-        <ng-container *ngIf="isDisplayButtonVisible(listContext)">
-            <div class="list-control-centering-container">
-                <button
-                        (click)="loadNextPageClicked()"
-                        color="primary"
-                        mat-raised-button
-                >
-                    Load more...
-                </button>
-            </div>
-        </ng-container>
-
+    <ng-container *ngIf="isDisplayButtonVisible(listContext)">
+      <div class="list-control-centering-container">
+        <button
+                (click)="loadNextPageClicked()"
+                color="primary"
+                mat-raised-button>
+          Load more...
+        </button>
+      </div>
     </ng-container>
-
+  </ng-container>
 </mat-selection-list>

@@ -6,10 +6,9 @@ import {Friend} from '../../models/friends.types';
 @Component({
   selector: 'app-friends-page',
   templateUrl: './friends-page.component.html',
-  styleUrls: ['./friends-page.component.scss']
+  styleUrls: ['./friends-page.component.scss'],
 })
 export class FriendsPageComponent implements OnInit {
-
   constructor(
       private readonly titleService: TitleService,
       private readonly router: Router,
@@ -18,7 +17,7 @@ export class FriendsPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.titleService.title = "Friends";
+    this.titleService.title = 'Friends';
   }
 
   friendSelectedEvent(selectedFriend: Friend | {}) {

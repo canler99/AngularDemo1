@@ -1,0 +1,54 @@
+.full-width {
+  width: 100%;
+}
+
+.mat-radio-button {
+  display: block;
+  margin: 5px 0;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 30px;
+}
+
+.row-large {
+  max-width: 400px;
+}
+
+.row-small {
+  max-width: 50px;
+}
+
+.row-last {
+  padding-bottom: 10px;
+}
+
+.submit-button {
+  padding-left: 22px;
+}
+
+.col {
+  flex: 1;
+  margin-right: 40px;
+  margin-left: 18px;
+}
+
+.col:last-child {
+  margin-right: 0;
+}
+
+mat-card-actions div {
+  margin-left: 22px;
+  padding-top: 10px;
+}
+
+.button-spinner-container {
+  display: flex;
+  flex-direction: row;
+}
+
+mat-card-actions div mat-spinner {
+  margin-left: 30px;
+}

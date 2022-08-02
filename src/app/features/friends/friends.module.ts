@@ -19,7 +19,7 @@ import {ReactiveFormsModule} from '@angular/forms';
     FriendsPageComponent,
     FriendsListComponent,
     FriendDetailsComponent,
-    FriendEditComponent
+    FriendEditComponent,
   ],
   imports: [
     CommonModule,
@@ -27,8 +27,8 @@ import {ReactiveFormsModule} from '@angular/forms';
     FriendsRoutingModule,
     StoreModule.forFeature(friendsFeatureKey, friendsReducer),
     EffectsModule.forFeature([FriendsEffects]),
-    ReactiveFormsModule
-  ]
+    ReactiveFormsModule,
+  ],
 })
 export class FriendsModule {
 }

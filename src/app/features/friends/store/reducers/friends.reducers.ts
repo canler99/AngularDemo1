@@ -10,20 +10,23 @@ export const initialState: FriendsState = {
         pageSize: 0,
         loading: false,
         pageCount: 0,
-    }
+    },
 };
 
 export const friendsReducer = createReducer(
     initialState,
-    on(actions.loadFriendListNextPage, (state) => ({
+    on(actions.loadFriendListNextPage, state => ({
         ...state,
         listContext: {...state.listContext, loading: true, error: undefined},
     })),
-    on(actions.loadFriendListNextPageSuccess, (state, {currentPage, pageSize, pageCount, friendsReceived}) => ({
-        ...state,
-        listContext: {currentPage, pageSize, pageCount, loading: false},
-        friends: [...state.friends, ...friendsReceived],
-    })),
+    on(
+        actions.loadFriendListNextPageSuccess,
+        (state, {currentPage, pageSize, pageCount, friendsReceived}) => ({
+            ...state,
+            listContext: {currentPage, pageSize, pageCount, loading: false},
+            friends: [...state.friends, ...friendsReceived],
+        })
+    ),
     on(actions.loadFriendListDone, state => ({
         ...state,
         listContext: {...state.listContext, loading: false},
@@ -34,12 +37,14 @@ export const friendsReducer = createReducer(
         loading: false,
     })),
     on(actions.friendUpdated, (state, {friend}) => {
-        const itemIndex = state.friends.findIndex((item: Friend) => item.id === friend.id);
+        const itemIndex = state.friends.findIndex(
+            (item: Friend) => item.id === friend.id
+        );
         let newFriendList = [...state.friends];
         if (itemIndex >= 0) {
             newFriendList[itemIndex] = friend;
         }
 
         return {...state, friends: newFriendList};
-    }),
+    })
 );

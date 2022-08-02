@@ -5,14 +5,13 @@ import {TitleService} from '../../services/title-service/title.service';
   selector: 'app-settings-page',
   templateUrl: './settings-page.component.html',
   styleUrls: ['./settings-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingsPageComponent implements OnInit {
-
   constructor(private readonly titleService: TitleService) {
   }
 
   ngOnInit(): void {
-    this.titleService.title = "Settings";
+    this.titleService.title = 'Settings';
   }
 }

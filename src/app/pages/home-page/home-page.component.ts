@@ -5,14 +5,13 @@ import {TitleService} from '../../services/title-service/title.service';
   selector: 'app-home-page',
   templateUrl: './home-page.component.html',
   styleUrls: ['./home-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomePageComponent implements OnInit {
-
   constructor(private readonly titleService: TitleService) {
   }
 
   ngOnInit(): void {
-    this.titleService.title = "Home";
+    this.titleService.title = 'Home';
   }
 }

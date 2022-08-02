@@ -19,12 +19,12 @@ const routes: Routes = [
         component: FriendEditComponent,
       },
     ],
-  }
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class FriendsRoutingModule {
 }

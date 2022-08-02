@@ -8,16 +8,21 @@ export const loadFriendListNextPage = createAction(
 
 export const loadFriendListNextPageSuccess = createAction(
     '[Friends Component] load page success',
-    props<{ currentPage: number, pageSize: number, pageCount: number, friendsReceived: Friend[] }>()
+    props<{
+        currentPage: number;
+        pageSize: number;
+        pageCount: number;
+        friendsReceived: Friend[];
+    }>()
 );
 
 export const loadFriendListNextPageError = createAction(
     '[Friends Component] load page fail',
-    props<{ code: string, description: string }>()
+    props<{ code: string; description: string }>()
 );
 
 export const loadFriendListDone = createAction(
-    '[Friends Component] load page list: no more elements to load',
+    '[Friends Component] load page list: no more elements to load'
 );
 
 export const friendUpdated = createAction(

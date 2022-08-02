@@ -5,14 +5,13 @@ import {TitleService} from '../../services/title-service/title.service';
   selector: 'app-not-found-page',
   templateUrl: './not-found-page.component.html',
   styleUrls: ['./not-found-page.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NotFoundPageComponent implements OnInit {
-
   constructor(private readonly titleService: TitleService) {
   }
 
   ngOnInit(): void {
-    this.titleService.title = "Error: Page not found !";
+    this.titleService.title = 'Error: Page not found !';
   }
 }
