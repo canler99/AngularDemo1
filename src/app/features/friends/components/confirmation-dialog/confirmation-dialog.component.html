@@ -1,8 +1,10 @@
-<h1 mat-dialog-title>Delete Friend</h1>
+<h2 mat-dialog-title>Delete Friend</h2>
 <div mat-dialog-content>
-  Would you like to delete this friend from the list?
+    Would you like to delete this friend from the list?
 </div>
 <div mat-dialog-actions>
-  <button mat-button mat-dialog-close>No</button>
-  <button cdkFocusInitial mat-button mat-dialog-close>Ok</button>
+    <button (click)="onClick(true)" mat-button mat-dialog-close>Ok</button>
+    <button (click)="onClick(false)" cdkFocusInitial mat-button mat-dialog-close>
+        Cancel
+    </button>
 </div>
