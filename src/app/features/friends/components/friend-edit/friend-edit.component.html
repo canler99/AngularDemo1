@@ -1,7 +1,7 @@
 <mat-card class="right-card">
   <mat-card-header class="card-header">
     <mat-card-title>
-      <h2>Edit</h2>
+      <h2>{{ tittle | async }}</h2>
     </mat-card-title>
     <button
             (click)="closeBtnClicked()"
@@ -11,7 +11,7 @@
       <mat-icon>close</mat-icon>
     </button>
   </mat-card-header>
-  <form (ngSubmit)="onSubmit()" [formGroup]="editFriendForm" novalidate>
+  <form (ngSubmit)="onSubmit()" [formGroup]="editFriendForm">
     <mat-card-content>
       <div class="row row-large">
         <div class="col">
@@ -57,6 +57,7 @@
         </mat-spinner>
         <ng-template #showButton>
           <button
+                  [disabled]="editFriendForm.pristine"
                   class="submit-button"
                   color="primary"
                   mat-raised-button

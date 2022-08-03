@@ -6,6 +6,7 @@ import {Friend} from '../models/friends.types';
 import * as actions from '../store/actions/friends.actions';
 import * as selectors from '../store/selectors/friends.selectors';
 import {ListContext} from '../store/friends-store.types';
+import {map} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -33,9 +34,22 @@ export class FriendsService {
     return this.store.select(selectors.selectFriend, {friendId});
   }
 
-  updateFriend(friend: Friend): Observable<boolean> {
+  addFriend$(newFriend: Friend): Observable<boolean> {
+    return this.friendsApiService.addFriend$(newFriend).pipe(
+        tap(friend => this.store.dispatch(actions.friendAdded({friend}))),
+        map(() => true)
+    );
+  }
+
+  updateFriend$(friend: Friend): Observable<boolean> {
     return this.friendsApiService
-        .updateFriend(friend)
+        .updateFriend$(friend)
         .pipe(tap(() => this.store.dispatch(actions.friendUpdated({friend}))));
+  }
+
+  deleteFriend$(friend: Friend): Observable<boolean> {
+    return this.friendsApiService
+        .deleteFriend$(friend)
+        .pipe(tap(() => this.store.dispatch(actions.friendDeleted({friend}))));
   }
 }

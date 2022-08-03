@@ -25,4 +25,10 @@ export class FriendsPageComponent implements OnInit {
       relativeTo: this.route,
     });
   }
+
+  onAddBtnClicked() {
+    this.router.navigate(['edit'], {
+      relativeTo: this.route,
+    });
+  }
 }

@@ -18,6 +18,10 @@ const routes: Routes = [
         path: 'edit/:id',
         component: FriendEditComponent,
       },
+      {
+        path: 'edit',
+        component: FriendEditComponent,
+      },
     ],
   },
 ];

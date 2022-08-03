@@ -25,7 +25,17 @@ export const loadFriendListDone = createAction(
     '[Friends Component] load page list: no more elements to load'
 );
 
+export const friendAdded = createAction(
+    '[Friends Component] friend added',
+    props<{ friend: Friend }>()
+);
+
 export const friendUpdated = createAction(
     '[Friends Component] friend updated',
+    props<{ friend: Friend }>()
+);
+
+export const friendDeleted = createAction(
+    '[Friends Component] friend deleted',
     props<{ friend: Friend }>()
 );

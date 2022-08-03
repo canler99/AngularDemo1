@@ -11,4 +11,8 @@ export class ConfirmationDialogComponent {
       public readonly dialogRef: MatDialogRef<ConfirmationDialogComponent>
   ) {
   }
+
+  onClick(okSelected: boolean) {
+    this.dialogRef.close(okSelected);
+  }
 }

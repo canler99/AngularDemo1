@@ -1,11 +1,19 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {BehaviorSubject, catchError, filter, Observable, of, switchMap, take, tap,} from 'rxjs';
+import {BehaviorSubject, catchError, iif, mergeMap, Observable, of, switchMap, take, tap,} from 'rxjs';
 import {Friend} from '../../models/friends.types';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FriendsService} from '../../services/friends.service';
 import {FormBuilder, Validators} from '@angular/forms';
 import {map} from 'rxjs/operators';
 import {MatSnackBar} from '@angular/material/snack-bar';
+
+const defaultEmptyFriend: Friend = {
+  id: '',
+  name: '',
+  age: 0,
+  weight: 0,
+  friends: [],
+};
 
 @Component({
   selector: 'app-friend-edit',
@@ -15,18 +23,34 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 })
 export class FriendEditComponent implements OnInit {
   protected friend$: Observable<any> = this.route.params.pipe(
-      filter(({id}) => !!id),
-      switchMap(({id}) => this.friendsService.getFriendById$(id)),
-      tap(friend => console.log('Paso con ', friend))
+      switchMap(({id}) =>
+          iif(
+              () => !!id,
+              this.friendsService.getFriendById$(id),
+              of(defaultEmptyFriend)
+          )
+      ),
+      catchError(error =>
+          of(error).pipe(
+              tap(() => this.router.navigate(['friends'])),
+              map(() => null)
+          )
+      ),
+      tap(friend => console.log('Paso2 con ', friend))
   );
 
   protected _isSpinnerVisibleSubject = new BehaviorSubject<boolean>(false);
   protected isSpinnerVisible$ = this._isSpinnerVisibleSubject.asObservable();
 
+  // TODO: properly translate (return translation keys to the template)
+  protected tittle: Observable<string> = this.friend$.pipe(
+      map(({id}) => (!!id ? 'Edit' : 'Add'))
+  );
+
   protected editFriendForm = this.formBuilder.group({
     name: ['', [Validators.required]],
-    age: ['0', [Validators.required]],
-    weight: ['0', [Validators.required]],
+    age: ['', [Validators.required]],
+    weight: ['', [Validators.required]],
   });
 
   constructor(
@@ -89,13 +113,18 @@ export class FriendEditComponent implements OnInit {
         .pipe(
             take(1),
             map((friend: Friend) => this.convertFriendFormDataToModel(friend)),
-            switchMap((friend: Friend) => this.friendsService.updateFriend(friend)),
+            tap(friend => console.log('Paso3 con ', friend, !!friend?.id)),
+            mergeMap((friend: Friend) =>
+                !!friend?.id
+                    ? this.friendsService.updateFriend$(friend)
+                    : this.friendsService.addFriend$(friend)
+            ),
             tap(() => {
               this._isSpinnerVisibleSubject.next(false);
               this.snackBar.open('Friend was updated successfully!', undefined, {
                 duration: 3000,
               });
-              this.navigateBack();
+              this.navigateBack(true);
             }),
             catchError(error =>
                 of(error).pipe(
@@ -118,9 +147,16 @@ export class FriendEditComponent implements OnInit {
     this.navigateBack();
   }
 
-  navigateBack() {
-    this.friend$.pipe(take(1)).subscribe((friend: Friend) => {
-      this.router.navigate(['friends', 'details', friend?.id]);
-    });
+  navigateBack(successfulWrite: boolean = false) {
+    this.friend$
+        .pipe(
+            take(1),
+            tap(({id}) =>
+                successfulWrite || !!id
+                    ? this.router.navigate(['friends', 'details', id])
+                    : this.router.navigate(['friends'])
+            )
+        )
+        .subscribe();
   }
 }
