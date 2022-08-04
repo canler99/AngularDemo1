@@ -12,7 +12,7 @@
     </button>
   </mat-card-header>
   <form (ngSubmit)="onSubmit()" [formGroup]="editFriendForm">
-    <mat-card-content>
+    <div>
       <div class="row row-large">
         <div class="col">
           <mat-form-field class="full-width">
@@ -33,6 +33,13 @@
                     *ngIf="editFriendForm.controls['age'].hasError('required')">
               Age is <strong>required</strong>
             </mat-error>
+            <mat-error
+                    *ngIf="
+                editFriendForm.controls['age'].hasError('min') ||
+                editFriendForm.controls['age'].hasError('max')
+              ">
+              Age should be between {{ MIN_AGE }} and {{ MAX_AGE }}
+            </mat-error>
           </mat-form-field>
         </div>
       </div>
@@ -45,10 +52,45 @@
                     *ngIf="editFriendForm.controls['weight'].hasError('required')">
               Weight name is <strong>required</strong>
             </mat-error>
+            <mat-error
+                    *ngIf="
+                editFriendForm.controls['age'].hasError('min') ||
+                editFriendForm.controls['age'].hasError('max')
+              ">
+              Weight should be between {{ MIN_WEIGHT }} and {{ MAX_WEIGHT }}
+            </mat-error>
           </mat-form-field>
         </div>
       </div>
-    </mat-card-content>
+
+      <h3>Friends (Current/Available)</h3>
+      <div class="lists-container">
+        <mat-list class="list-wrapper">
+          <ng-container *ngFor="let child of children$ | async">
+            <mat-list-item>
+              <div class="list-item">{{ child.name }}</div>
+              <button mat-icon-button>
+                <mat-icon class="mat-24">arrow_forward</mat-icon>
+              </button>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+          </ng-container>
+        </mat-list>
+        <div class="spacer-div"></div>
+
+        <div class="list-wrapper">
+          <mat-list>
+            <ng-container *ngFor="let friend of availableFriends$ | async">
+              <mat-list-item>
+                <div class="list-item">{{ friend.name }}</div>
+                <mat-icon class="mat-24">arrow_back</mat-icon>
+              </mat-list-item>
+              <mat-divider></mat-divider>
+            </ng-container>
+          </mat-list>
+        </div>
+      </div>
+    </div>
     <mat-card-actions>
       <div class="button-spinner-container">
         <mat-spinner

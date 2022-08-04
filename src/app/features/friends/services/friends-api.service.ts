@@ -27,9 +27,15 @@ export class FriendsApiService {
         name: `John Smith-${i + 1}`,
         age: 10 + i,
         weight: 80 + i,
-        friends: [],
+        friendIds: [],
       });
     }
+
+    this._friendsRoot[0].friendIds.push(this._friendsRoot[1].id);
+    this._friendsRoot[0].friendIds.push(this._friendsRoot[2].id);
+    this._friendsRoot[0].friendIds.push(this._friendsRoot[3].id);
+    this._friendsRoot[1].friendIds.push(this._friendsRoot[4].id);
+    this._friendsRoot[1].friendIds.push(this._friendsRoot[0].id);
   }
 
   getFriendListPage$(
@@ -48,15 +54,15 @@ export class FriendsApiService {
     }).pipe(delay(SIMULATED_API_RESPONSE_TIME));
   }
 
-  addFriend$(friend: Friend): Observable<Friend> {
+  addFriend$(newFriend: Friend): Observable<Friend> {
     const maxId = this._friendsRoot.reduce(
         (prev, curr) => (prev < curr?.id ? curr.id : prev),
         '0'
     );
 
-    return of({...friend, id: (+maxId + 1).toString()}).pipe(
+    return of({...newFriend, id: (+maxId + 1).toString()}).pipe(
         delay(SIMULATED_API_RESPONSE_TIME),
-        tap(() => {
+        tap(friend => {
           this._friendsRoot.push(friend);
         })
     );
@@ -66,6 +72,7 @@ export class FriendsApiService {
     const itemIndex = this._friendsRoot.findIndex(
         (item: Friend) => item.id === friend.id
     );
+
     if (itemIndex < 0) {
       throw {
         code: '003',
@@ -98,5 +105,13 @@ export class FriendsApiService {
           this._friendsRoot.splice(itemIndex, 1);
         })
     );
+  }
+
+  getChildren$(friend: Friend): Observable<Friend[]> {
+    const res = this._friendsRoot.filter(item =>
+        friend.friendIds.some(id => id === item.id)
+    );
+
+    return of(res).pipe(delay(SIMULATED_API_RESPONSE_TIME));
   }
 }

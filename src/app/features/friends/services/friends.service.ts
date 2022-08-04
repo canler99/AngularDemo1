@@ -52,4 +52,8 @@ export class FriendsService {
         .deleteFriend$(friend)
         .pipe(tap(() => this.store.dispatch(actions.friendDeleted({friend}))));
   }
+
+  getChildren$(friend: Friend): Observable<Friend[]> {
+    return this.friendsApiService.getChildren$(friend);
+  }
 }

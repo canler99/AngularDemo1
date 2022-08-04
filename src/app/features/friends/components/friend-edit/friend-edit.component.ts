@@ -1,5 +1,17 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {BehaviorSubject, catchError, iif, mergeMap, Observable, of, switchMap, take, tap,} from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  combineLatest,
+  filter,
+  iif,
+  mergeMap,
+  Observable,
+  of,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs';
 import {Friend} from '../../models/friends.types';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FriendsService} from '../../services/friends.service';
@@ -12,7 +24,7 @@ const defaultEmptyFriend: Friend = {
   name: '',
   age: 0,
   weight: 0,
-  friends: [],
+  friendIds: [],
 };
 
 @Component({
@@ -22,6 +34,31 @@ const defaultEmptyFriend: Friend = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FriendEditComponent implements OnInit {
+  protected readonly MIN_AGE = 0;
+  protected readonly MAX_AGE = 150;
+  protected readonly MIN_WEIGHT = 0;
+  protected readonly MAX_WEIGHT = 500;
+
+  protected editFriendForm = this.formBuilder.group({
+    name: ['', [Validators.required]],
+    age: [
+      '',
+      [
+        Validators.required,
+        Validators.min(this.MIN_AGE),
+        Validators.max(this.MAX_AGE),
+      ],
+    ],
+    weight: [
+      '',
+      [
+        Validators.required,
+        Validators.min(this.MIN_WEIGHT),
+        Validators.max(this.MAX_WEIGHT),
+      ],
+    ],
+  });
+
   protected friend$: Observable<any> = this.route.params.pipe(
       switchMap(({id}) =>
           iif(
@@ -39,6 +76,24 @@ export class FriendEditComponent implements OnInit {
       tap(friend => console.log('Paso2 con ', friend))
   );
 
+  protected children$: Observable<Friend[]> = this.friend$.pipe(
+      switchMap((friend: Friend) => this.friendsService.getChildren$(friend))
+  );
+
+  protected availableFriends$: Observable<Friend[]> = combineLatest([
+    this.friend$.pipe(take(1)),
+    this.friendsService.getFriendsList$(),
+    this.children$,
+  ]).pipe(
+      map(([curFriend, allFriends, curChildren]) =>
+          allFriends.filter(
+              (item: Friend) =>
+                  item.id !== curFriend.id &&
+                  !curChildren.some((child: Friend) => child.id === item.id)
+          )
+      )
+  );
+
   protected _isSpinnerVisibleSubject = new BehaviorSubject<boolean>(false);
   protected isSpinnerVisible$ = this._isSpinnerVisibleSubject.asObservable();
 
@@ -46,12 +101,6 @@ export class FriendEditComponent implements OnInit {
   protected tittle: Observable<string> = this.friend$.pipe(
       map(({id}) => (!!id ? 'Edit' : 'Add'))
   );
-
-  protected editFriendForm = this.formBuilder.group({
-    name: ['', [Validators.required]],
-    age: ['', [Validators.required]],
-    weight: ['', [Validators.required]],
-  });
 
   constructor(
       private readonly router: Router,
@@ -66,6 +115,7 @@ export class FriendEditComponent implements OnInit {
     this.friend$
         .pipe(
             take(1),
+            filter(({id}) => !!id),
             tap(friend => this.updateFriendFormDataFromModel(friend)),
             catchError(error =>
                 of(error).pipe(
@@ -106,6 +156,11 @@ export class FriendEditComponent implements OnInit {
       this.navigateBack();
     }
 
+    if (!this.editFriendForm.valid) {
+      this.editFriendForm.markAllAsTouched();
+      return;
+    }
+
     this._isSpinnerVisibleSubject.next(true);
     this.editFriendForm.disable();
 
@@ -124,7 +179,7 @@ export class FriendEditComponent implements OnInit {
               this.snackBar.open('Friend was updated successfully!', undefined, {
                 duration: 3000,
               });
-              this.navigateBack(true);
+              this.navigateBack();
             }),
             catchError(error =>
                 of(error).pipe(
@@ -147,12 +202,13 @@ export class FriendEditComponent implements OnInit {
     this.navigateBack();
   }
 
-  navigateBack(successfulWrite: boolean = false) {
+  navigateBack() {
     this.friend$
         .pipe(
+            tap(v => console.log('Entro con ', v)),
             take(1),
             tap(({id}) =>
-                successfulWrite || !!id
+                !!id
                     ? this.router.navigate(['friends', 'details', id])
                     : this.router.navigate(['friends'])
             )

@@ -30,22 +30,22 @@
   <mat-card-content>
     <ng-container *ngIf="friend$ | async as friend">
       <div>
-        <mat-label><h3 class="label">Full Name:</h3></mat-label>
         <mat-label
         ><h3 class="value">{{ friend.name }}</h3></mat-label
         >
+        <mat-label><h4 class="label">Full Name</h4></mat-label>
       </div>
       <div>
-        <mat-label><h3 class="label">Age:</h3></mat-label>
         <mat-label
         ><h3 class="value">{{ friend.age }}</h3></mat-label
         >
+        <mat-label><h4 class="label">Age</h4></mat-label>
       </div>
       <div>
-        <mat-label><h3 class="label">Weight:</h3></mat-label>
         <mat-label
         ><h3 class="value">{{ friend.weight }}</h3></mat-label
         >
+        <mat-label><h4 class="label">Weight</h4></mat-label>
       </div>
     </ng-container>
   </mat-card-content>

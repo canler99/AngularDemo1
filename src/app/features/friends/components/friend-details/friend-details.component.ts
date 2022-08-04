@@ -26,14 +26,14 @@ export class FriendDetailsComponent {
       )
   );
 
-  constructor(
-      private router: Router,
-      private readonly route: ActivatedRoute,
-      private readonly friendsService: FriendsService,
-      private readonly dialog: MatDialog,
-      private readonly snackBar: MatSnackBar
-  ) {
-  }
+    constructor(
+        private router: Router,
+        private readonly route: ActivatedRoute,
+        private readonly friendsService: FriendsService,
+        private readonly dialog: MatDialog,
+        private readonly snackBar: MatSnackBar
+    ) {
+    }
 
   editFriendBtnClicked() {
     this.friend$.pipe(take(1)).subscribe((friend: Friend) => {
@@ -44,10 +44,10 @@ export class FriendDetailsComponent {
   openDialog(): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent);
 
-    dialogRef
-        .afterClosed()
-        .pipe(take(1))
-        .subscribe(result => result && this.deleteCurrentFriend());
+      dialogRef
+          .afterClosed()
+          .pipe(take(1))
+          .subscribe(result => result && this.deleteCurrentFriend());
   }
 
   navigateBack() {
@@ -55,30 +55,35 @@ export class FriendDetailsComponent {
   }
 
   deleteCurrentFriend() {
-    this.friend$
-        .pipe(
-            take(1),
-            switchMap((friend: Friend) =>
-                this.friendsService.deleteFriend$(friend)
-            ),
-            tap(() => {
-              this.snackBar.open('Friend was deleted successfully!', undefined, {
-                duration: 3000,
-              });
-              this.navigateBack();
-            }),
-            catchError(error =>
-                of(error).pipe(
-                    // Better way could be displaying a user-friendly error message in an error banner at the top of the form
-                    tap(({code, description}) => {
-                      this.snackBar.open(
-                          `Error deleting: ${code}:${description}`,
-                          'DISMISS'
-                      );
-                    })
-                )
-            )
-        )
-        .subscribe();
+      this.friend$
+          .pipe(
+              take(1),
+              switchMap((friend: Friend) =>
+                  this.friendsService.deleteFriend$(friend).pipe(
+                      tap(() => {
+                          this.snackBar.open(
+                              `Friend: ${friend.name} was deleted successfully!`,
+                              undefined,
+                              {
+                                  duration: 3000,
+                              }
+                          );
+                          this.navigateBack();
+                      })
+                  )
+              ),
+              catchError(error =>
+                  of(error).pipe(
+                      // Better way could be displaying a user-friendly error message in an error banner at the top of the form
+                      tap(({code, description}) => {
+                          this.snackBar.open(
+                              `Error deleting: ${code}:${description}`,
+                              'DISMISS'
+                          );
+                      })
+                  )
+              )
+          )
+          .subscribe();
   }
 }
