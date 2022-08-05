@@ -5,9 +5,12 @@ import {
   combineLatest,
   filter,
   iif,
+  merge,
   mergeMap,
   Observable,
   of,
+  scan,
+  Subject,
   switchMap,
   take,
   tap,
@@ -19,6 +22,7 @@ import {FormBuilder, Validators} from '@angular/forms';
 import {map} from 'rxjs/operators';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
+// Default empty object declaration used for initialization when adding a new friend
 const defaultEmptyFriend: Friend = {
   id: '',
   name: '',
@@ -26,6 +30,12 @@ const defaultEmptyFriend: Friend = {
   weight: 0,
   friendIds: [],
 };
+
+// Command structure to be used when handling add, delete, list events
+interface Command {
+  cmd: 'add' | 'delete' | 'list';
+  payload: Friend | Friend[];
+}
 
 @Component({
   selector: 'app-friend-edit',
@@ -39,6 +49,7 @@ export class FriendEditComponent implements OnInit {
   protected readonly MIN_WEIGHT = 0;
   protected readonly MAX_WEIGHT = 500;
 
+  // Angular reactive form instance used by this component
   protected editFriendForm = this.formBuilder.group({
     name: ['', [Validators.required]],
     age: [
@@ -59,6 +70,8 @@ export class FriendEditComponent implements OnInit {
     ],
   });
 
+  // Retrieves the existing friend object to edited from the id obtained from the route.
+  // Generates a new default friend object if no id was provided.
   protected friend$: Observable<any> = this.route.params.pipe(
       switchMap(({id}) =>
           iif(
@@ -76,10 +89,39 @@ export class FriendEditComponent implements OnInit {
       tap(friend => console.log('Paso2 con ', friend))
   );
 
-  protected children$: Observable<Friend[]> = this.friend$.pipe(
-      switchMap((friend: Friend) => this.friendsService.getChildren$(friend))
+  // Add friend event
+  protected addChildSubject = new Subject<Command>();
+
+  // Delete friend event
+  protected deleteChildSubject = new Subject<Command>();
+
+  // Keeps an in memory copy of the children (friends) of the current friend.
+  // Responds to command to initialize (list), add or delete friends to that list.
+  protected children$: Observable<Friend[]> = merge(
+      this.friend$.pipe(
+          switchMap((friend: Friend) =>
+              this.friendsService
+                  .getChildren$(friend)
+                  .pipe(
+                      map(
+                          (friends: Friend[]) =>
+                              ({cmd: 'list', payload: friends} as Command)
+                      )
+                  )
+          )
+      ),
+      this.addChildSubject,
+      this.deleteChildSubject
+  ).pipe(
+      scan<Command, Friend[]>(
+          (acc: Friend[] | Command, value: Command): Friend[] =>
+              this.applyCommandToChildrenList(value, acc as Friend[])
+      ),
+      map(v => v as Friend[])
   );
 
+  // List of all available friend used to connect new friend with the current one.
+  // Filters out the current friend, and friends of current friend
   protected availableFriends$: Observable<Friend[]> = combineLatest([
     this.friend$.pipe(take(1)),
     this.friendsService.getFriendsList$(),
@@ -94,13 +136,17 @@ export class FriendEditComponent implements OnInit {
       )
   );
 
-  protected _isSpinnerVisibleSubject = new BehaviorSubject<boolean>(false);
-  protected isSpinnerVisible$ = this._isSpinnerVisibleSubject.asObservable();
-
   // TODO: properly translate (return translation keys to the template)
+  // Title to display depending on edit mode
   protected tittle: Observable<string> = this.friend$.pipe(
       map(({id}) => (!!id ? 'Edit' : 'Add'))
   );
+
+  // Controls when the spinner should be displayed
+  private _isSpinnerVisibleSubject = new BehaviorSubject<boolean>(false);
+
+  // Generates the form title depending on weather we are editing a new or existing friend
+  protected isSpinnerVisible$ = this._isSpinnerVisibleSubject.asObservable();
 
   constructor(
       private readonly router: Router,
@@ -111,6 +157,10 @@ export class FriendEditComponent implements OnInit {
   ) {
   }
 
+  /**
+   * During initialization, if we are editing an existing friend, we convert the model to Form data
+   * If there is an error we navigate back to the friend list page.
+   */
   ngOnInit(): void {
     this.friend$
         .pipe(
@@ -127,6 +177,10 @@ export class FriendEditComponent implements OnInit {
         .subscribe();
   }
 
+  /**
+   * Updates the form with the data from the current model object
+   * @param friend Current object being edited
+   */
   updateFriendFormDataFromModel(friend: Friend) {
     if (!friend) {
       throw {code: '004', description: 'Trying to update a null friend.'};
@@ -139,6 +193,10 @@ export class FriendEditComponent implements OnInit {
     });
   }
 
+  /**
+   * Converts the data stored in the form, to a Friend model object.
+   * @param friend Used to get the id of the current object since that field it is not kept in the form
+   */
   convertFriendFormDataToModel(friend: Friend): Friend {
     const formValue = this.editFriendForm.value;
 
@@ -150,6 +208,9 @@ export class FriendEditComponent implements OnInit {
     };
   }
 
+  /**
+   * Handles form submission.
+   */
   onSubmit() {
     // check if form have not been modified, just go back
     if (!this.editFriendForm.dirty) {
@@ -202,6 +263,9 @@ export class FriendEditComponent implements OnInit {
     this.navigateBack();
   }
 
+  /**
+   * Navigates to the previous page which will be the list page in Add mode, or the details page on Edit mode.
+   */
   navigateBack() {
     this.friend$
         .pipe(
@@ -214,5 +278,33 @@ export class FriendEditComponent implements OnInit {
             )
         )
         .subscribe();
+  }
+
+  /**
+   * Updateds by applying a command to the list of children of the current friend.
+   * @param cmd Command to apply. Possible commands are: add, delete, list
+   * @param childrenList
+   * @private
+   */
+  private applyCommandToChildrenList(
+      cmd: Command,
+      childrenList: Friend[]
+  ): Friend[] {
+    switch (cmd.cmd) {
+      case 'add':
+        childrenList.push(cmd.payload as Friend);
+        break;
+      case 'delete':
+        const index = (childrenList as Friend[]).findIndex(
+            (friend: Friend) => friend.id === (cmd?.payload as Friend)?.id
+        );
+        if (index > -1) {
+          (childrenList as Friend[]).splice(index, 1);
+        }
+        break;
+      case 'list':
+        childrenList = cmd.payload as Friend[];
+    }
+    return [...childrenList];
   }
 }
