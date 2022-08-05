@@ -35,20 +35,20 @@ export class FriendDetailsComponent {
     ) {
     }
 
-  editFriendBtnClicked() {
-    this.friend$.pipe(take(1)).subscribe((friend: Friend) => {
-      this.router.navigate(['friends', 'edit', friend?.id]);
-    });
-  }
+    editFriendBtnClicked() {
+        this.friend$.pipe(take(1)).subscribe((friend: Friend) => {
+            this.router.navigate(['friends', 'edit', friend?.id]);
+        });
+    }
 
-  openDialog(): void {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent);
+    openDialog(): void {
+        const dialogRef = this.dialog.open(ConfirmationDialogComponent);
 
-      dialogRef
-          .afterClosed()
-          .pipe(take(1))
-          .subscribe(result => result && this.deleteCurrentFriend());
-  }
+        dialogRef
+            .afterClosed()
+            .pipe(take(1))
+            .subscribe(result => result && this.deleteCurrentFriend());
+    }
 
   navigateBack() {
     this.router.navigate(['friends']).then();
