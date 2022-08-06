@@ -42,6 +42,7 @@ export class FriendsService {
   }
 
   updateFriend$(friend: Friend): Observable<boolean> {
+    console.log('PASO por BE service updateFriend$ con ', friend);
     return this.friendsApiService
         .updateFriend$(friend)
         .pipe(tap(() => this.store.dispatch(actions.friendUpdated({friend}))));
@@ -54,6 +55,7 @@ export class FriendsService {
   }
 
   getChildren$(friend: Friend): Observable<Friend[]> {
+    console.log('PASO por BE service');
     return this.friendsApiService.getChildren$(friend);
   }
 }

@@ -19,7 +19,7 @@ import {Friend} from '../../models/friends.types';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FriendsService} from '../../services/friends.service';
 import {FormBuilder, Validators} from '@angular/forms';
-import {map} from 'rxjs/operators';
+import {map, shareReplay} from 'rxjs/operators';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
 // Default empty object declaration used for initialization when adding a new friend
@@ -85,8 +85,7 @@ export class FriendEditComponent implements OnInit {
               tap(() => this.router.navigate(['friends'])),
               map(() => null)
           )
-      ),
-      tap(friend => console.log('Paso2 con ', friend))
+      )
   );
 
   // Add friend event
@@ -99,6 +98,7 @@ export class FriendEditComponent implements OnInit {
   // Responds to command to initialize (list), add or delete friends to that list.
   protected children$: Observable<Friend[]> = merge(
       this.friend$.pipe(
+          take(1),
           switchMap((friend: Friend) =>
               this.friendsService
                   .getChildren$(friend)
@@ -113,11 +113,19 @@ export class FriendEditComponent implements OnInit {
       this.addChildSubject,
       this.deleteChildSubject
   ).pipe(
-      scan<Command, Friend[]>(
-          (acc: Friend[] | Command, value: Command): Friend[] =>
-              this.applyCommandToChildrenList(value, acc as Friend[])
+      tap(
+          (command: Command) =>
+              command?.cmd !== 'list' && this.editFriendForm.markAsDirty()
       ),
-      map(v => v as Friend[])
+      tap(v => console.log('Entro friend con:', v)),
+      scan(
+          (acc: Friend[], value: Command): Friend[] =>
+              this.applyCommandToChildrenList(value, acc),
+          []
+      ),
+      map((v: Friend[]) => v),
+      tap(v => console.log('Entro2 friend con:', v)),
+      shareReplay(1)
   );
 
   // List of all available friend used to connect new friend with the current one.
@@ -196,16 +204,21 @@ export class FriendEditComponent implements OnInit {
   /**
    * Converts the data stored in the form, to a Friend model object.
    * @param friend Used to get the id of the current object since that field it is not kept in the form
+   * @returns Observable<Friend> generated friend object observable
    */
-  convertFriendFormDataToModel(friend: Friend): Friend {
+  convertFriendFormDataToModel(friend: Friend): Observable<Friend> {
     const formValue = this.editFriendForm.value;
 
-    return {
-      ...friend,
-      name: formValue.name ?? '',
-      age: +(formValue.age ?? 0),
-      weight: +(formValue.weight ?? 0),
-    };
+    return this.children$.pipe(
+        take(1),
+        map((children: Friend[]) => ({
+          ...friend,
+          name: formValue.name ?? '',
+          age: +(formValue.age ?? 0),
+          weight: +(formValue.weight ?? 0),
+          friendIds: children.map((child: Friend) => child.id),
+        }))
+    );
   }
 
   /**
@@ -228,7 +241,9 @@ export class FriendEditComponent implements OnInit {
     this.friend$
         .pipe(
             take(1),
-            map((friend: Friend) => this.convertFriendFormDataToModel(friend)),
+            switchMap((friend: Friend) =>
+                this.convertFriendFormDataToModel(friend)
+            ),
             tap(friend => console.log('Paso3 con ', friend, !!friend?.id)),
             mergeMap((friend: Friend) =>
                 !!friend?.id
@@ -259,12 +274,16 @@ export class FriendEditComponent implements OnInit {
         .subscribe();
   }
 
+  /**
+   * Handles the close button close event
+   */
   closeBtnClicked() {
     this.navigateBack();
   }
 
   /**
-   * Navigates to the previous page which will be the list page in Add mode, or the details page on Edit mode.
+   * Navigates to the previous page which will be the list page in Add mode,
+   * or the details page on Edit mode.
    */
   navigateBack() {
     this.friend$
@@ -278,6 +297,22 @@ export class FriendEditComponent implements OnInit {
             )
         )
         .subscribe();
+  }
+
+  /**
+   * Handles the leftRemoveChildBtnClicked event, to delete child.
+   * @param friend: Child to delete
+   */
+  leftRemoveChildBtnClicked(friend: Friend) {
+    this.deleteChildSubject.next({cmd: 'delete', payload: friend});
+  }
+
+  /**
+   * Handles the rightDeleteChildBtnClicked event, to add an available friend to children list.
+   * @param friend: Friend to add
+   */
+  rightDeleteChildBtnClicked(friend: Friend) {
+    this.addChildSubject.next({cmd: 'add', payload: friend});
   }
 
   /**

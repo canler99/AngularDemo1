@@ -71,7 +71,9 @@
             <ng-container *ngFor="let child of children$ | async">
               <mat-list-item>
                 <div class="list-item">{{ child.name }}</div>
-                <button mat-icon-button>
+                <button
+                        (click)="leftRemoveChildBtnClicked(child)"
+                        mat-icon-button>
                   <mat-icon class="mat-24">arrow_forward</mat-icon>
                 </button>
               </mat-list-item>
@@ -87,7 +89,11 @@
             <ng-container *ngFor="let friend of availableFriends$ | async">
               <mat-list-item>
                 <div class="list-item">{{ friend.name }}</div>
-                <mat-icon class="mat-24">arrow_back</mat-icon>
+                <button
+                        (click)="rightDeleteChildBtnClicked(friend)"
+                        mat-icon-button>
+                  <mat-icon class="mat-24">arrow_back</mat-icon>
+                </button>
               </mat-list-item>
               <mat-divider></mat-divider>
             </ng-container>
