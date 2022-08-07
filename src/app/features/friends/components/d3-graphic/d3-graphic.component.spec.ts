@@ -8,9 +8,8 @@ describe('D3GraphicComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [D3GraphicComponent]
-    })
-        .compileComponents();
+      declarations: [D3GraphicComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(D3GraphicComponent);
     component = fixture.componentInstance;

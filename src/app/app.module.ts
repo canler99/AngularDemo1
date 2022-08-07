@@ -10,7 +10,6 @@ import {StoreModule} from '@ngrx/store';
 import {EffectsModule} from '@ngrx/effects';
 import {HomePageComponent} from './pages/home-page/home-page.component';
 import {NotFoundPageComponent} from './pages/not-found-page/not-found-page.component';
-import {SettingsPageComponent} from './pages/settings-page/settings-page.component';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {environment} from '../environments/environment';
 
@@ -20,7 +19,6 @@ import {environment} from '../environments/environment';
     NavigationComponent,
     HomePageComponent,
     NotFoundPageComponent,
-    SettingsPageComponent,
   ],
   imports: [
     BrowserModule,

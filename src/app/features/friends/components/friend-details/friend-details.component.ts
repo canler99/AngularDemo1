@@ -37,7 +37,6 @@ export class FriendDetailsComponent {
         filter((friend: Friend) => !!friend),
         switchMap((friend: Friend) => this.friendsService.getChildren$(friend)),
         tap(() => this.isChildrenLoadingSubject$.next(false)),
-        tap(v => console.log('Entro con:', v)),
         catchError(error =>
             of(error).pipe(
                 map(() => []),

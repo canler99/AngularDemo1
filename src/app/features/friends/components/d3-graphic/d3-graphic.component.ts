@@ -6,7 +6,6 @@ import {Friend} from '../../models/friends.types';
   selector: 'app-d3-graphic',
   templateUrl: './d3-graphic.component.html',
   styleUrls: ['./d3-graphic.component.scss'],
-  //  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class D3GraphicComponent implements OnInit {
   private _d3Data: any;
@@ -17,7 +16,6 @@ export class D3GraphicComponent implements OnInit {
   private height = 200 - this.margin * 2;
 
   constructor() {
-    console.log('Graphics component instatiated');
   }
 
   @Input() set friendList(value: Friend[]) {
@@ -30,8 +28,6 @@ export class D3GraphicComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('Graphics component initialized');
-
     this.createSvg();
     this.drawBars(this._d3Data);
   }
