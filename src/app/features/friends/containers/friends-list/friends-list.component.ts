@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output,} from '@angular/core';
-import {Observable, of, switchMap, take, tap} from 'rxjs';
+import {Observable, of, switchMap, take, tap, zip} from 'rxjs';
 import {Friend} from '../../models/friends.types';
 import {FriendsService} from '../../services/friends.service';
 import {ListContext} from '../../store/friends-store.types';
@@ -31,6 +31,18 @@ export class FriendsListComponent implements OnInit {
                 ({currentPage}) =>
                     currentPage === 0 && this.friendsService.loadFriendListNextPage()
             )
+        )
+        .subscribe();
+
+    // Select the first element of the list when available
+    zip([this.listContext$, this.friends$])
+        .pipe(
+            take(1),
+            tap(([listContext, friends]) => {
+              listContext.currentPage === 1 &&
+              friends?.length > 0 &&
+              this.listOptionClicked(friends[0]);
+            })
         )
         .subscribe();
   }
