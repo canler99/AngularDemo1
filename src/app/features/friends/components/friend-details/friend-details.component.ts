@@ -1,9 +1,9 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {catchError, filter, Observable, of, switchMap, take, tap} from 'rxjs';
+import {BehaviorSubject, catchError, filter, Observable, of, switchMap, take, tap,} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {FriendsService} from '../../services/friends.service';
 import {Friend} from '../../models/friends.types';
-import {map} from 'rxjs/operators';
+import {map, shareReplay} from 'rxjs/operators';
 import {MatDialog} from '@angular/material/dialog';
 import {ConfirmationDialogComponent} from '../confirmation-dialog/confirmation-dialog.component';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -16,9 +16,12 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 })
 export class FriendDetailsComponent {
     // Retrieves the existing friend object to display from the id obtained from the route
+    // Indicates when the children list is being loaded
+    private isChildrenLoadingSubject$ = new BehaviorSubject<boolean>(true);
     // If no id was provided navigates back to the friend list page
     protected friend$: Observable<any> = this.route.params.pipe(
         filter(({id}) => !!id),
+        tap(() => this.isChildrenLoadingSubject$.next(true)),
         switchMap(({id}) => this.friendsService.getFriendById$(id)),
         catchError(error =>
             of(error).pipe(
@@ -26,6 +29,22 @@ export class FriendDetailsComponent {
                 map(() => null)
             )
         )
+    );
+    protected isChildrenLoading$ = this.isChildrenLoadingSubject$.asObservable();
+
+    // Friends (children) of the current friend
+    protected children$: Observable<Friend[]> = this.friend$.pipe(
+        filter((friend: Friend) => !!friend),
+        switchMap((friend: Friend) => this.friendsService.getChildren$(friend)),
+        tap(() => this.isChildrenLoadingSubject$.next(false)),
+        tap(v => console.log('Entro con:', v)),
+        catchError(error =>
+            of(error).pipe(
+                map(() => []),
+                tap(() => this.isChildrenLoadingSubject$.next(false))
+            )
+        ),
+        shareReplay(1)
     );
 
     constructor(
@@ -42,7 +61,7 @@ export class FriendDetailsComponent {
      */
     editFriendBtnClicked() {
         this.friend$.pipe(take(1)).subscribe((friend: Friend) => {
-            this.router.navigate(['friends', 'edit', friend?.id]);
+            this.router.navigate(['friends', 'edit', friend?.id]).then();
         });
     }
 

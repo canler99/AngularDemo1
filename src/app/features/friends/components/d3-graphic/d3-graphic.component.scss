@@ -1,0 +1,13 @@
+.link {
+  stroke: #ccc;
+}
+
+.node text {
+  pointer-events: none;
+  font: 10px sans-serif;
+}
+
+.container {
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, .2);
+}

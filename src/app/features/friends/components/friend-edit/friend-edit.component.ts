@@ -95,40 +95,57 @@ export class FriendEditComponent implements OnInit {
   protected deleteChildSubject = new Subject<Command>();
 
   // Keeps an in memory copy of the children (friends) of the current friend.
+  // are editing a new or existing friend
+  protected tittle: Observable<string> = this.friend$.pipe(
+      map((friend: Friend) => (!!friend?.id ? 'Edit' : 'Add'))
+  );
+
+  // List of all available friend used to connect new friend with the current one.
+  // Controls when the form's spinner should be displayed
+  private _isFormSpinnerVisibleSubject = new BehaviorSubject<boolean>(false);
+
+  // TODO: properly translate (return translation keys to the template)
+  // Generates the form title depending on weather we
+  protected isFormSpinnerVisible$ =
+      this._isFormSpinnerVisibleSubject.asObservable();
+  // Controls when the left list's spinner should be displayed
+  private _isLeftListSpinnerVisibleSubject = new BehaviorSubject<boolean>(true);
   // Responds to command to initialize (list), add or delete friends to that list.
   protected children$: Observable<Friend[]> = merge(
       this.friend$.pipe(
           take(1),
+          filter((friend: Friend) => !!friend),
           switchMap((friend: Friend) =>
-              this.friendsService
-                  .getChildren$(friend)
-                  .pipe(
-                      map(
-                          (friends: Friend[]) =>
-                              ({cmd: 'list', payload: friends} as Command)
-                      )
-                  )
-          )
+              iif(
+                  () => !!friend && !!friend?.id,
+                  this.friendsService.getChildren$(friend),
+                  of([])
+              )
+          ),
+          map(
+              (friends: Friend[]) => ({cmd: 'list', payload: friends} as Command)
+          ),
+          shareReplay(1)
       ),
       this.addChildSubject,
       this.deleteChildSubject
   ).pipe(
-      tap(
-          (command: Command) =>
-              command?.cmd !== 'list' && this.editFriendForm.markAsDirty()
-      ),
-      tap(v => console.log('Entro friend con:', v)),
+      tap((command: Command) => {
+        command?.cmd !== 'list' && this.editFriendForm.markAsDirty();
+        this._isLeftListSpinnerVisibleSubject.next(false);
+      }),
       scan(
           (acc: Friend[], value: Command): Friend[] =>
               this.applyCommandToChildrenList(value, acc),
           []
       ),
       map((v: Friend[]) => v),
-      tap(v => console.log('Entro2 friend con:', v)),
       shareReplay(1)
   );
-
-  // List of all available friend used to connect new friend with the current one.
+  protected isLeftListSpinnerVisible$ =
+      this._isLeftListSpinnerVisibleSubject.asObservable();
+  // Controls when the right list's spinner should be displayed
+  private _isRightListSpinnerVisible = new BehaviorSubject<boolean>(true);
   // Filters out the current friend, and friends of current friend
   protected availableFriends$: Observable<Friend[]> = combineLatest([
     this.friend$.pipe(take(1)),
@@ -141,20 +158,23 @@ export class FriendEditComponent implements OnInit {
                   item.id !== curFriend.id &&
                   !curChildren.some((child: Friend) => child.id === item.id)
           )
+      ),
+      tap(() => this._isRightListSpinnerVisible.next(false)),
+      catchError(error =>
+          of(error).pipe(
+              tap(({code, description}) => {
+                this._isRightListSpinnerVisible.next(false);
+                this.snackBar.open(
+                    `Error retrieving available friends: ${code}:${description}`,
+                    'DISMISS'
+                );
+              }),
+              map(() => [])
+          )
       )
   );
-
-  // TODO: properly translate (return translation keys to the template)
-  // Title to display depending on edit mode
-  protected tittle: Observable<string> = this.friend$.pipe(
-      map(({id}) => (!!id ? 'Edit' : 'Add'))
-  );
-
-  // Controls when the spinner should be displayed
-  private _isSpinnerVisibleSubject = new BehaviorSubject<boolean>(false);
-
-  // Generates the form title depending on weather we are editing a new or existing friend
-  protected isSpinnerVisible$ = this._isSpinnerVisibleSubject.asObservable();
+  protected isRightListSpinnerVisible$ =
+      this._isRightListSpinnerVisible.asObservable();
 
   constructor(
       private readonly router: Router,
@@ -235,7 +255,7 @@ export class FriendEditComponent implements OnInit {
       return;
     }
 
-    this._isSpinnerVisibleSubject.next(true);
+    this._isFormSpinnerVisibleSubject.next(true);
     this.editFriendForm.disable();
 
     this.friend$
@@ -244,14 +264,13 @@ export class FriendEditComponent implements OnInit {
             switchMap((friend: Friend) =>
                 this.convertFriendFormDataToModel(friend)
             ),
-            tap(friend => console.log('Paso3 con ', friend, !!friend?.id)),
             mergeMap((friend: Friend) =>
                 !!friend?.id
                     ? this.friendsService.updateFriend$(friend)
                     : this.friendsService.addFriend$(friend)
             ),
             tap(() => {
-              this._isSpinnerVisibleSubject.next(false);
+              this._isFormSpinnerVisibleSubject.next(false);
               this.snackBar.open('Friend was updated successfully!', undefined, {
                 duration: 3000,
               });
@@ -265,7 +284,7 @@ export class FriendEditComponent implements OnInit {
                           `Error updating: ${code}:${description}`,
                           'DISMISS'
                       );
-                      this._isSpinnerVisibleSubject.next(false);
+                      this._isFormSpinnerVisibleSubject.next(false);
                       this.editFriendForm.enable();
                     })
                 )
@@ -288,7 +307,6 @@ export class FriendEditComponent implements OnInit {
   navigateBack() {
     this.friend$
         .pipe(
-            tap(v => console.log('Entro con ', v)),
             take(1),
             tap(({id}) =>
                 !!id

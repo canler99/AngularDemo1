@@ -8,7 +8,8 @@
               (click)="closeBtnClicked()"
               aria-label="Close"
               color="primary"
-              mat-icon-button>
+              mat-icon-button
+              type="button">
         <mat-icon>close</mat-icon>
       </button>
     </mat-card-header>
@@ -63,22 +64,31 @@
           </mat-form-field>
         </div>
       </div>
-
       <h3>Friends (Current/Available)</h3>
       <div class="lists-container">
         <div class="list-column-container">
           <mat-list class="list-wrapper">
-            <ng-container *ngFor="let child of children$ | async">
-              <mat-list-item>
-                <div class="list-item">{{ child.name }}</div>
-                <button
-                        (click)="leftRemoveChildBtnClicked(child)"
-                        mat-icon-button>
-                  <mat-icon class="mat-24">arrow_forward</mat-icon>
-                </button>
+            <ng-container *ngIf="children$ | async as children">
+              <ng-container *ngFor="let child of children">
+                <mat-list-item>
+                  <div class="list-item">{{ child.name }}</div>
+                  <button
+                          (click)="leftRemoveChildBtnClicked(child)"
+                          mat-icon-button>
+                    <mat-icon class="mat-24">arrow_forward</mat-icon>
+                  </button>
+                </mat-list-item>
+                <mat-divider></mat-divider>
+              </ng-container>
+              <mat-list-item *ngIf="!((children?.length ?? 0) > 0)">
+                <div class="list-item">List is empty</div>
               </mat-list-item>
-              <mat-divider></mat-divider>
             </ng-container>
+            <mat-list-item
+                    *ngIf="(isLeftListSpinnerVisible$ | async) === true"
+                    class="list-control-centering-container">
+              <mat-spinner diameter="20"></mat-spinner>
+            </mat-list-item>
           </mat-list>
         </div>
 
@@ -86,17 +96,27 @@
 
         <div class="list-column-container">
           <mat-list class="list-wrapper">
-            <ng-container *ngFor="let friend of availableFriends$ | async">
-              <mat-list-item>
-                <div class="list-item">{{ friend.name }}</div>
-                <button
-                        (click)="rightDeleteChildBtnClicked(friend)"
-                        mat-icon-button>
-                  <mat-icon class="mat-24">arrow_back</mat-icon>
-                </button>
+            <ng-container *ngIf="availableFriends$ | async as friends">
+              <ng-container *ngFor="let friend of friends">
+                <mat-list-item>
+                  <div class="list-item">{{ friend.name }}</div>
+                  <button
+                          (click)="rightDeleteChildBtnClicked(friend)"
+                          mat-icon-button>
+                    <mat-icon class="mat-24">arrow_back</mat-icon>
+                  </button>
+                </mat-list-item>
+                <mat-divider></mat-divider>
+              </ng-container>
+              <mat-list-item *ngIf="!((friends?.length ?? 0) > 0)">
+                <div class="list-item">List is empty</div>
               </mat-list-item>
-              <mat-divider></mat-divider>
             </ng-container>
+            <mat-list-item
+                    *ngIf="(isRightListSpinnerVisible$ | async) === true"
+                    class="list-control-centering-container">
+              <mat-spinner diameter="20"></mat-spinner>
+            </mat-list-item>
           </mat-list>
         </div>
       </div>
@@ -104,7 +124,7 @@
     <mat-card-actions>
       <div class="button-spinner-container">
         <mat-spinner
-                *ngIf="(isSpinnerVisible$ | async) === true; else showButton"
+                *ngIf="(isFormSpinnerVisible$ | async) === true; else showButton"
                 diameter="20">
         </mat-spinner>
         <ng-template #showButton>

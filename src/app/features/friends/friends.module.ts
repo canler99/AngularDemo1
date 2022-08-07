@@ -14,6 +14,7 @@ import {FriendDetailsComponent} from './components/friend-details/friend-details
 import {FriendEditComponent} from './components/friend-edit/friend-edit.component';
 import {ReactiveFormsModule} from '@angular/forms';
 import {ConfirmationDialogComponent} from './components/confirmation-dialog/confirmation-dialog.component';
+import {D3GraphicComponent} from './components/d3-graphic/d3-graphic.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import {ConfirmationDialogComponent} from './components/confirmation-dialog/conf
     FriendDetailsComponent,
     FriendEditComponent,
     ConfirmationDialogComponent,
+    D3GraphicComponent,
   ],
   imports: [
     CommonModule,

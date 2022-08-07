@@ -3,7 +3,6 @@ import {Observable, of, switchMap, take, tap} from 'rxjs';
 import {Friend} from '../../models/friends.types';
 import {FriendsService} from '../../services/friends.service';
 import {ListContext} from '../../store/friends-store.types';
-import {MatSelectionListChange} from '@angular/material/list';
 
 @Component({
   selector: 'app-friends-list',
@@ -50,7 +49,7 @@ export class FriendsListComponent implements OnInit {
     );
   }
 
-  listSelectionChanged(event: MatSelectionListChange) {
-    this.friendSelectedEvent.emit(event?.options[0]?.value);
+  listOptionClicked(friendSelected: Friend) {
+    this.friendSelectedEvent.emit(friendSelected);
   }
 }

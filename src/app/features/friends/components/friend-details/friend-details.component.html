@@ -41,12 +41,27 @@
         >
         <mat-label><h4 class="label">Age</h4></mat-label>
       </div>
-      <div>
+      <div class="row-last">
         <mat-label
         ><h3 class="value">{{ friend.weight }}</h3></mat-label
         >
         <mat-label><h4 class="label">Weight</h4></mat-label>
       </div>
+
+      <div *ngIf="(isChildrenLoading$ | async) === true">
+        <span>Loading chart ...</span>
+        <mat-spinner diameter="20"></mat-spinner>
+      </div>
+
+      <ng-container *ngIf="children$ | async as children">
+        <ng-container
+                *ngIf="children.length > 0 && (isChildrenLoading$ | async) !== true">
+          <h3>Friend's ages chart (D3 Demo)</h3>
+          <div class="graphics-container">
+            <app-d3-graphic [friendList]="children"></app-d3-graphic>
+          </div>
+        </ng-container>
+      </ng-container>
     </ng-container>
   </mat-card-content>
 </mat-card>

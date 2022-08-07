@@ -1,8 +1,6 @@
-<mat-selection-list
-        (selectionChange)="listSelectionChanged($event)"
-        [multiple]="false">
+<mat-selection-list [multiple]="false">
   <ng-container *ngFor="let friend of friends$ | async">
-    <mat-list-option [value]="friend">
+    <mat-list-option (click)="listOptionClicked(friend)" [value]="friend">
       {{ friend.name }}
     </mat-list-option>
     <mat-divider></mat-divider>
