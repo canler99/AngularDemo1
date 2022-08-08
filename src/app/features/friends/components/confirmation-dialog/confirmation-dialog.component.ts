@@ -12,6 +12,10 @@ export class ConfirmationDialogComponent {
   ) {
   }
 
+  /**
+   * On click handler for the any of the dialog's buttons
+   * @param okSelected
+   */
   onClick(okSelected: boolean) {
     this.dialogRef.close(okSelected);
   }

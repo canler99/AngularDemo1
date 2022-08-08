@@ -7,6 +7,9 @@ import {Friend} from '../../models/friends.types';
   templateUrl: './d3-graphic.component.html',
   styleUrls: ['./d3-graphic.component.scss'],
 })
+/**
+ * Implements a D3.Js bar diagram
+ */
 export class D3GraphicComponent implements OnInit {
   private _d3Data: any;
 
@@ -32,6 +35,10 @@ export class D3GraphicComponent implements OnInit {
     this.drawBars(this._d3Data);
   }
 
+  /**
+   * Converts model data to the format expected by this component
+   * @param children List of friends
+   */
   convertModelDataToD3(children: Friend[] = []) {
     return children.map(({name, age, weight}) => ({
       name,
@@ -40,6 +47,10 @@ export class D3GraphicComponent implements OnInit {
     }));
   }
 
+  /**
+   * Initializes the SVG graphic
+   * @private
+   */
   private createSvg(): void {
     d3.select('figure#bar > svg').remove();
 
@@ -52,6 +63,11 @@ export class D3GraphicComponent implements OnInit {
         .attr('transform', 'translate(' + this.margin + ',' + this.margin + ')');
   }
 
+  /**
+   * Draws the actual bar chart
+   * @param data
+   * @private
+   */
   private drawBars(data: any[]): void {
     // Create the X-axis band scale
     const x = d3

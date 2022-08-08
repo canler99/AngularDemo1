@@ -95,7 +95,7 @@ export class FriendsApiService {
    * Calls (simulates) the API service that updates an existing friend.
    * @param friend
    */
-  updateFriend$(friend: Friend): Observable<boolean> {
+  updateFriend$(friend: Friend): Observable<Friend> {
     const itemIndex = this._friendsRoot.findIndex(
         (item: Friend) => item.id === friend.id
     );
@@ -107,7 +107,7 @@ export class FriendsApiService {
       };
     }
 
-    return of(true).pipe(
+    return of(friend).pipe(
         delay(SIMULATED_API_RESPONSE_TIME),
         tap(() => {
           this._friendsRoot[itemIndex] = friend;

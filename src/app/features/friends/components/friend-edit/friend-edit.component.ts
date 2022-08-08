@@ -269,12 +269,12 @@ export class FriendEditComponent implements OnInit {
                     ? this.friendsService.updateFriend$(friend)
                     : this.friendsService.addFriend$(friend)
             ),
-            tap(() => {
+            tap((friend: Friend) => {
               this._isFormSpinnerVisibleSubject.next(false);
-              this.snackBar.open('Friend was updated successfully!', undefined, {
+              this.snackBar.open('Changes were successfully saved!', undefined, {
                 duration: 3000,
               });
-              this.navigateBack();
+              this.navigateBack(friend);
             }),
             catchError(error =>
                 of(error).pipe(
@@ -304,13 +304,13 @@ export class FriendEditComponent implements OnInit {
    * Navigates to the previous page which will be the list page in Add mode,
    * or the details page on Edit mode.
    */
-  navigateBack() {
+  navigateBack(friend?: Friend) {
     this.friend$
         .pipe(
             take(1),
             tap(({id}) =>
-                !!id
-                    ? this.router.navigate(['friends', 'details', id])
+                !!id || !!friend?.id
+                    ? this.router.navigate(['friends', 'details', id || friend?.id])
                     : this.router.navigate(['friends'])
             )
         )
