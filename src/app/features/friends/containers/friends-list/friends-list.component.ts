@@ -11,13 +11,23 @@ import {ListContext} from '../../store/friends-store.types';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FriendsListComponent implements OnInit {
+  /**
+   * Output event the gets fired whenever the list selection changes
+   */
   @Output() friendSelectedEvent = new EventEmitter<Friend>();
-
-  protected listContext$ = this.friendsService.getFriendsListContext$();
-
-  protected friends$: Observable<Friend[]> = of('').pipe(
-    switchMap(() => this.friendsService.getFriendsList$())
+  /**
+   * Main list of friend objects
+   * @protected
+   */
+  friends$: Observable<Friend[]> = of('').pipe(
+      switchMap(() => this.friendsService.getFriendsList$())
   );
+  /**
+   * Provides additional information about the list (current page number,
+   * total number of pages, loading indicator)
+   * @protected
+   */
+  protected listContext$ = this.friendsService.getFriendsListContext$();
 
   constructor(protected readonly friendsService: FriendsService) {
   }
@@ -47,11 +57,18 @@ export class FriendsListComponent implements OnInit {
         .subscribe();
   }
 
+  /**
+   * Handles the load next page button clicked event
+   */
   loadNextPageClicked() {
     this.friendsService.loadFriendListNextPage(10);
   }
 
-  isDisplayButtonVisible(listContext: ListContext): boolean {
+  /**
+   * Controls visibility of the button to load the next page of the list
+   * @param listContext
+   */
+  isNextPageButtonVisible(listContext: ListContext): boolean {
     return (
         !!listContext &&
         listContext.currentPage > 0 &&
@@ -61,6 +78,10 @@ export class FriendsListComponent implements OnInit {
     );
   }
 
+  /**
+   * Handler for the list option clicked event
+   * @param friendSelected
+   */
   listOptionClicked(friendSelected: Friend) {
     this.friendSelectedEvent.emit(friendSelected);
   }

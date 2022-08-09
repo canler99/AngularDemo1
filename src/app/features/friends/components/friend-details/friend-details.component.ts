@@ -15,10 +15,12 @@ import {MatSnackBar} from '@angular/material/snack-bar';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FriendDetailsComponent {
-    // Retrieves the existing friend object to display from the id obtained from the route
-    // Indicates when the children list is being loaded
     private isChildrenLoadingSubject$ = new BehaviorSubject<boolean>(true);
-    // If no id was provided navigates back to the friend list page
+    /**
+     * Retrieves the existing friend object to display from the id obtained from the route
+     * If no id was provided navigates back to the friend list page
+     * @protected
+     */
     protected friend$: Observable<any> = this.route.params.pipe(
         filter(({id}) => !!id),
         tap(() => this.isChildrenLoadingSubject$.next(true)),
@@ -30,9 +32,15 @@ export class FriendDetailsComponent {
             )
         )
     );
+    /**
+     * Indicates when the children list is being loaded
+     * @protected
+     */
     protected isChildrenLoading$ = this.isChildrenLoadingSubject$.asObservable();
-
-    // Friends (children) of the current friend
+    /**
+     * Friends (children) of the current friend
+     * @protected
+     */
     protected children$: Observable<Friend[]> = this.friend$.pipe(
         filter((friend: Friend) => !!friend),
         switchMap((friend: Friend) => this.friendsService.getChildren$(friend)),
@@ -106,7 +114,8 @@ export class FriendDetailsComponent {
                 ),
                 catchError(error =>
                     of(error).pipe(
-                        // Better way could be displaying a user-friendly error message in an error banner at the top of the form
+                        // Better way could be displaying a user-friendly error message in an error banner at the top
+                        // of the form
                         tap(({code, description}) => {
                             this.snackBar.open(
                                 `Error deleting: ${code}:${description}`,

@@ -1,17 +1,24 @@
 <mat-selection-list [multiple]="false">
-  <ng-container *ngFor="let friend of friends$ | async">
-    <mat-list-option (click)="listOptionClicked(friend)" [value]="friend">
-      {{ friend.name }}
-    </mat-list-option>
-    <mat-divider></mat-divider>
-  </ng-container>
   <ng-container *ngIf="listContext$ | async as listContext">
+    <ng-container *ngIf="friends$ | async as friends">
+      <ng-container *ngFor="let friend of friends">
+        <mat-list-option (click)="listOptionClicked(friend)" [value]="friend">
+          {{ friend.name }}
+        </mat-list-option>
+        <mat-divider></mat-divider>
+      </ng-container>
+      <mat-list-item
+              *ngIf="!((friends?.length ?? 0) > 0) && !listContext?.loading">
+        <div class="list-item">List is empty</div>
+      </mat-list-item>
+    </ng-container>
+
     <ng-container *ngIf="!!listContext?.loading">
       <div class="list-control-centering-container">
         <mat-spinner diameter="20"></mat-spinner>
       </div>
     </ng-container>
-    <ng-container *ngIf="isDisplayButtonVisible(listContext)">
+    <ng-container *ngIf="isNextPageButtonVisible(listContext)">
       <div class="list-control-centering-container">
         <button
                 (click)="loadNextPageClicked()"

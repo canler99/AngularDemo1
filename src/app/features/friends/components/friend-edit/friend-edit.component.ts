@@ -4,7 +4,6 @@ import {
   catchError,
   combineLatest,
   filter,
-  iif,
   merge,
   mergeMap,
   Observable,
@@ -22,8 +21,10 @@ import {FormBuilder, Validators} from '@angular/forms';
 import {map, shareReplay} from 'rxjs/operators';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
-// Default empty object declaration used for initialization when adding a new friend
-const defaultEmptyFriend: Friend = {
+/**
+ * Default empty object declaration used for initialization when adding a new friend
+ */
+export const defaultEmptyFriend: Friend = {
   id: '',
   name: '',
   age: 0,
@@ -31,7 +32,9 @@ const defaultEmptyFriend: Friend = {
   friendIds: [],
 };
 
-// Command structure to be used when handling add, delete, list events
+/**
+ * Command structure to be used when handling add, delete, list events
+ */
 interface Command {
   cmd: 'add' | 'delete' | 'list';
   payload: Friend | Friend[];
@@ -44,12 +47,40 @@ interface Command {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FriendEditComponent implements OnInit {
+  /**
+   * Retrieves the existing friend object to be edited from the id obtained from the route.
+   * Generates a new default friend object if no id was provided.
+   */
+  public friend$: Observable<any> = this.route.params.pipe(
+      switchMap(({id}) =>
+          !!id ? this.friendsService.getFriendById$(id) : of(defaultEmptyFriend)
+      ),
+      catchError(error =>
+          of(error).pipe(
+              tap(v => console.log('Entro5 con: ERROR 5', v)),
+              tap(() => this.router.navigate(['friends'])),
+              map(() => null)
+          )
+      )
+  );
+
+  /**
+   * Generates the form title depending on weather we re editing a new or existing friend
+   * @todo: properly translate (return translation keys to the template)
+   */
+  public tittle$: Observable<string> = this.friend$.pipe(
+      map((friend: Friend) => (!!friend?.id ? 'Edit' : 'Add'))
+  );
+
   protected readonly MIN_AGE = 0;
   protected readonly MAX_AGE = 150;
   protected readonly MIN_WEIGHT = 0;
   protected readonly MAX_WEIGHT = 500;
 
-  // Angular reactive form instance used by this component
+  /**
+   * Angular reactive form instance used by this component
+   * @protected
+   */
   protected editFriendForm = this.formBuilder.group({
     name: ['', [Validators.required]],
     age: [
@@ -69,63 +100,45 @@ export class FriendEditComponent implements OnInit {
       ],
     ],
   });
-
-  // Retrieves the existing friend object to edited from the id obtained from the route.
-  // Generates a new default friend object if no id was provided.
-  protected friend$: Observable<any> = this.route.params.pipe(
-      switchMap(({id}) =>
-          iif(
-              () => !!id,
-              this.friendsService.getFriendById$(id),
-              of(defaultEmptyFriend)
-          )
-      ),
-      catchError(error =>
-          of(error).pipe(
-              tap(() => this.router.navigate(['friends'])),
-              map(() => null)
-          )
-      )
-  );
-
-  // Add friend event
+  /**
+   * Add friend event
+   * @protected
+   */
   protected addChildSubject = new Subject<Command>();
-
-  // Delete friend event
+  /**
+   * Delete friend event
+   * @protected
+   */
   protected deleteChildSubject = new Subject<Command>();
-
-  // Keeps an in memory copy of the children (friends) of the current friend.
-  // are editing a new or existing friend
-  protected tittle: Observable<string> = this.friend$.pipe(
-      map((friend: Friend) => (!!friend?.id ? 'Edit' : 'Add'))
-  );
-
-  // List of all available friend used to connect new friend with the current one.
-  // Controls when the form's spinner should be displayed
-  private _isFormSpinnerVisibleSubject = new BehaviorSubject<boolean>(false);
-
-  // TODO: properly translate (return translation keys to the template)
-  // Generates the form title depending on weather we
+  /**
+   * Controls when the form's spinner should be displayed
+   * @protected
+   */
+  protected _isFormSpinnerVisibleSubject = new BehaviorSubject<boolean>(false);
   protected isFormSpinnerVisible$ =
       this._isFormSpinnerVisibleSubject.asObservable();
-  // Controls when the left list's spinner should be displayed
+  /**
+   * Controls when the left list's spinner should be displayed
+   * @private
+   */
   private _isLeftListSpinnerVisibleSubject = new BehaviorSubject<boolean>(true);
-  // Responds to command to initialize (list), add or delete friends to that list.
-  protected children$: Observable<Friend[]> = merge(
+  protected isLeftListSpinnerVisible$ =
+      this._isLeftListSpinnerVisibleSubject.asObservable();
+  /**
+   * Keeps an in memory copy of the children (friends) of the current friend.
+   * Responds to command to initialize (list), add or delete friends to that list.
+   * @protected
+   */
+  public children$: Observable<Friend[]> = merge(
       this.friend$.pipe(
           take(1),
           filter((friend: Friend) => !!friend),
           switchMap((friend: Friend) =>
-              iif(
-                  () => !!friend && !!friend?.id,
-                  this.friendsService.getChildren$(friend),
-                  of([])
-              )
+              !!friend && !!friend?.id
+                  ? this.friendsService.getChildren$(friend)
+                  : of([])
           ),
-          map(
-              (friends: Friend[]) => ({cmd: 'list', payload: friends} as Command)
-          ),
-          shareReplay(1)
+          map((friends: Friend[]) => ({cmd: 'list', payload: friends} as Command))
       ),
       this.addChildSubject,
       this.deleteChildSubject
@@ -142,16 +155,25 @@ export class FriendEditComponent implements OnInit {
       map((v: Friend[]) => v),
       shareReplay(1)
   );
-  protected isLeftListSpinnerVisible$ =
-      this._isLeftListSpinnerVisibleSubject.asObservable();
-  // Controls when the right list's spinner should be displayed
+  /**
+   * Controls when the right list's spinner should be displayed
+   * @private
+   */
   private _isRightListSpinnerVisible = new BehaviorSubject<boolean>(true);
-  // Filters out the current friend, and friends of current friend
-  protected availableFriends$: Observable<Friend[]> = combineLatest([
+  protected isRightListSpinnerVisible$ =
+      this._isRightListSpinnerVisible.asObservable();
+
+  /**
+   * List of all available friends to connect with the current one. Filters out
+   *  the current friend, and friends of the current friend
+   * @protected
+   */
+  public availableFriends$: Observable<Friend[]> = combineLatest([
     this.friend$.pipe(take(1)),
     this.friendsService.getFriendsList$(),
     this.children$,
   ]).pipe(
+      tap(v => console.log('Entro 111 con: ', v)),
       map(([curFriend, allFriends, curChildren]) =>
           allFriends.filter(
               (item: Friend) =>
@@ -162,6 +184,7 @@ export class FriendEditComponent implements OnInit {
       tap(() => this._isRightListSpinnerVisible.next(false)),
       catchError(error =>
           of(error).pipe(
+              tap(v => console.log('Entro ' + '112 con:ERROR 112')),
               tap(({code, description}) => {
                 this._isRightListSpinnerVisible.next(false);
                 this.snackBar.open(
@@ -173,8 +196,6 @@ export class FriendEditComponent implements OnInit {
           )
       )
   );
-  protected isRightListSpinnerVisible$ =
-      this._isRightListSpinnerVisible.asObservable();
 
   constructor(
       private readonly router: Router,
@@ -278,7 +299,8 @@ export class FriendEditComponent implements OnInit {
             }),
             catchError(error =>
                 of(error).pipe(
-                    // Better way could be displaying a user-friendly error message in an error banner at the top of the form
+                    // Better way could be displaying a user-friendly error message in an error banner at the top
+                    // of the form
                     tap(({code, description}) => {
                       this.snackBar.open(
                           `Error updating: ${code}:${description}`,

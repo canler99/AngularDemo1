@@ -21,10 +21,10 @@ import {environment} from '../environments/environment';
     NotFoundPageComponent,
   ],
   imports: [
+    MaterialCommonModule,
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MaterialCommonModule,
     StoreModule.forRoot({}, {}),
     EffectsModule.forRoot([]),
     StoreDevtoolsModule.instrument({
@@ -32,7 +32,6 @@ import {environment} from '../environments/environment';
       logOnly: environment.production, // Restrict extension to log-only mode
     }),
   ],
-  providers: [],
   bootstrap: [AppComponent],
 })
 export class AppModule {

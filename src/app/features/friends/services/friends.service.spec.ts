@@ -12,6 +12,8 @@ describe('FriendsService', () => {
     TestBed.configureTestingModule({
       providers: [provideMockStore({initialState})],
     });
+
+    store = TestBed.inject(MockStore);
     service = TestBed.inject(FriendsService);
   });
 

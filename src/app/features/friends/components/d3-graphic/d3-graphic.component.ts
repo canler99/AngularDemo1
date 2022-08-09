@@ -22,7 +22,7 @@ export class D3GraphicComponent implements OnInit {
   }
 
   @Input() set friendList(value: Friend[]) {
-    this._d3Data = this.convertModelDataToD3(value);
+    this._d3Data = this.convertModelDataToD3(value ?? []);
 
     if (this.svg) {
       this.createSvg();
@@ -64,7 +64,7 @@ export class D3GraphicComponent implements OnInit {
   }
 
   /**
-   * Draws the actual bar chart
+   * Draws the bar chart
    * @param data
    * @private
    */
@@ -73,7 +73,7 @@ export class D3GraphicComponent implements OnInit {
     const x = d3
         .scaleBand()
         .range([0, this.width])
-        .domain(data.map(d => d.name))
+        .domain((data ?? []).map(d => d.name))
         .padding(0.2);
 
     // Draw the X-axis on the DOM
@@ -94,7 +94,7 @@ export class D3GraphicComponent implements OnInit {
     // Create and fill the bars
     this.svg
         .selectAll('bars')
-        .data(data)
+        .data(data ?? [])
         .enter()
         .append('rect')
         .attr('x', (d: any) => {
