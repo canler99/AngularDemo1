@@ -1,3 +1,6 @@
+/**
+ * Friend Type definition
+ */
 export interface Friend {
     id: string;
     name: string;

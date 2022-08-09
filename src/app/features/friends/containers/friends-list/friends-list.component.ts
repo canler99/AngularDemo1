@@ -20,7 +20,7 @@ export class FriendsListComponent implements OnInit {
    * @protected
    */
   friends$: Observable<Friend[]> = of('').pipe(
-      switchMap(() => this.friendsService.getFriendsList$())
+    switchMap(() => this.friendsService.getFriendsList$())
   );
   /**
    * Provides additional information about the list (current page number,

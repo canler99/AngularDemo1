@@ -1,6 +1,6 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {defaultEmptyFriend, FriendEditComponent,} from './friend-edit.component';
+import {FriendEditComponent} from './friend-edit.component';
 import {RouterTestingModule} from '@angular/router/testing';
 import {ReactiveFormsModule} from '@angular/forms';
 import {MaterialCommonModule} from '../../../../material.module';
@@ -9,12 +9,20 @@ import {FriendsService} from '../../services/friends.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {firstValueFrom, of, ReplaySubject, zip} from 'rxjs';
 import {Friend} from '../../models/friends.types';
+import {
+  defaultEmptyFriend,
+  fiveFriendsList,
+  friendsFourAndFiveList,
+  singleFriend,
+  twoFriendsList,
+} from '../../models/friends.mocks';
 
 describe('FriendEditComponent', () => {
   let component: FriendEditComponent;
   let fixture: ComponentFixture<FriendEditComponent>;
   let mockFriendsService: any;
   const routeParams = new ReplaySubject(1);
+  let navigateSpy: any;
 
   beforeEach(async () => {
     mockFriendsService = jasmine.createSpyObj([
@@ -28,6 +36,8 @@ describe('FriendEditComponent', () => {
     mockFriendsService.getFriendById$.calls.reset();
     mockFriendsService.getFriendsList$.calls.reset();
     mockFriendsService.getChildren$.calls.reset();
+
+    navigateSpy = jasmine.createSpy('navigate');
 
     await TestBed.configureTestingModule({
       declarations: [FriendEditComponent],
@@ -51,7 +61,7 @@ describe('FriendEditComponent', () => {
         {
           provide: Router,
           useClass: class {
-            navigate = jasmine.createSpy('navigate');
+            navigate = navigateSpy;
           },
         },
       ],
@@ -86,7 +96,6 @@ describe('FriendEditComponent', () => {
     });
   });
 
-  // TODO: Navigate instead
   describe('When id param is not present in the route', () => {
     it('should return the default empty friend and Add tittle', async () => {
       routeParams.next({});
@@ -99,6 +108,7 @@ describe('FriendEditComponent', () => {
       expect(res[0]).toEqual(defaultEmptyFriend);
       expect(res[1]).toEqual('Add');
       expect(mockFriendsService.getFriendById$).not.toHaveBeenCalled();
+      expect(navigateSpy).not.toHaveBeenCalled();
     });
   });
 
@@ -106,30 +116,18 @@ describe('FriendEditComponent', () => {
     it('current item and its children should be excluded', async () => {
       routeParams.next({id: '1'});
 
-      mockFriendsService.getFriendById$.and.returnValue(
-          of({id: '1', friendIds: ['2', '3']} as Friend)
-      );
+      mockFriendsService.getFriendById$.and.returnValue(of(singleFriend));
 
-      mockFriendsService.getFriendsList$.and.returnValue(
-          of([
-            {id: '1'},
-            {id: '2'},
-            {id: '3'},
-            {id: '4'},
-            {id: '5'},
-          ] as Friend[])
-      );
+      mockFriendsService.getFriendsList$.and.returnValue(of(fiveFriendsList));
 
-      mockFriendsService.getChildren$.and.returnValue(
-          of([{id: '2'}, {id: '3'}] as Friend[])
-      );
+      mockFriendsService.getChildren$.and.returnValue(of(twoFriendsList));
 
       fixture = TestBed.createComponent(FriendEditComponent);
       component = fixture.componentInstance;
       fixture.detectChanges();
 
       const res = await firstValueFrom(component.availableFriends$);
-      expect(res).toEqual([{id: '4'}, {id: '5'}] as Friend[]);
+      expect(res).toEqual(friendsFourAndFiveList);
     });
   });
 });

@@ -57,7 +57,7 @@ describe('FriendsListComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should automatically load the first page of the list of friends', async () => {
+  it('should automatically load the first page', async () => {
     const res = await firstValueFrom(component.friends$);
     expect(res).toEqual(singleFriendList);
   });

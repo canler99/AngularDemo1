@@ -20,17 +20,7 @@ import {FriendsService} from '../../services/friends.service';
 import {FormBuilder, Validators} from '@angular/forms';
 import {map, shareReplay} from 'rxjs/operators';
 import {MatSnackBar} from '@angular/material/snack-bar';
-
-/**
- * Default empty object declaration used for initialization when adding a new friend
- */
-export const defaultEmptyFriend: Friend = {
-  id: '',
-  name: '',
-  age: 0,
-  weight: 0,
-  friendIds: [],
-};
+import {defaultEmptyFriend} from '../../models/friends.mocks';
 
 /**
  * Command structure to be used when handling add, delete, list events
@@ -115,15 +105,6 @@ export class FriendEditComponent implements OnInit {
    * @protected
    */
   protected _isFormSpinnerVisibleSubject = new BehaviorSubject<boolean>(false);
-  protected isFormSpinnerVisible$ =
-      this._isFormSpinnerVisibleSubject.asObservable();
-  /**
-   * Controls when the left list's spinner should be displayed
-   * @private
-   */
-  private _isLeftListSpinnerVisibleSubject = new BehaviorSubject<boolean>(true);
-  protected isLeftListSpinnerVisible$ =
-      this._isLeftListSpinnerVisibleSubject.asObservable();
   /**
    * Keeps an in memory copy of the children (friends) of the current friend.
    * Responds to command to initialize (list), add or delete friends to that list.
@@ -156,13 +137,10 @@ export class FriendEditComponent implements OnInit {
       shareReplay(1)
   );
   /**
-   * Controls when the right list's spinner should be displayed
+   * Controls when the left list's spinner should be displayed
    * @private
    */
-  private _isRightListSpinnerVisible = new BehaviorSubject<boolean>(true);
-  protected isRightListSpinnerVisible$ =
-      this._isRightListSpinnerVisible.asObservable();
-
+  private _isLeftListSpinnerVisibleSubject = new BehaviorSubject<boolean>(true);
   /**
    * List of all available friends to connect with the current one. Filters out
    *  the current friend, and friends of the current friend
@@ -173,7 +151,6 @@ export class FriendEditComponent implements OnInit {
     this.friendsService.getFriendsList$(),
     this.children$,
   ]).pipe(
-      tap(v => console.log('Entro 111 con: ', v)),
       map(([curFriend, allFriends, curChildren]) =>
           allFriends.filter(
               (item: Friend) =>
@@ -196,6 +173,17 @@ export class FriendEditComponent implements OnInit {
           )
       )
   );
+  protected isFormSpinnerVisible$ =
+      this._isFormSpinnerVisibleSubject.asObservable();
+  /**
+   * Controls when the right list's spinner should be displayed
+   * @private
+   */
+  private _isRightListSpinnerVisible = new BehaviorSubject<boolean>(true);
+  protected isLeftListSpinnerVisible$ =
+      this._isLeftListSpinnerVisibleSubject.asObservable();
+  protected isRightListSpinnerVisible$ =
+      this._isRightListSpinnerVisible.asObservable();
 
   constructor(
       private readonly router: Router,

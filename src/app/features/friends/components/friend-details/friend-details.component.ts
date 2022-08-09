@@ -33,15 +33,10 @@ export class FriendDetailsComponent {
         )
     );
     /**
-     * Indicates when the children list is being loaded
-     * @protected
-     */
-    protected isChildrenLoading$ = this.isChildrenLoadingSubject$.asObservable();
-    /**
      * Friends (children) of the current friend
      * @protected
      */
-    protected children$: Observable<Friend[]> = this.friend$.pipe(
+    children$: Observable<Friend[]> = this.friend$.pipe(
         filter((friend: Friend) => !!friend),
         switchMap((friend: Friend) => this.friendsService.getChildren$(friend)),
         tap(() => this.isChildrenLoadingSubject$.next(false)),
@@ -53,6 +48,11 @@ export class FriendDetailsComponent {
         ),
         shareReplay(1)
     );
+    /**
+     * Indicates when the children list is being loaded
+     * @protected
+     */
+    protected isChildrenLoading$ = this.isChildrenLoadingSubject$.asObservable();
 
     constructor(
         private router: Router,
