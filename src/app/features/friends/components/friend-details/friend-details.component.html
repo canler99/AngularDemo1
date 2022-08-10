@@ -5,24 +5,24 @@
     </mat-card-title>
     <div>
       <button
-              (click)="openDialog()"
-              aria-label="Delete..."
-              color="primary"
-              mat-icon-button>
+        (click)="openDialog()"
+        aria-label="Delete..."
+        color="primary"
+        mat-icon-button>
         <mat-icon>delete</mat-icon>
       </button>
       <button
-              (click)="editFriendBtnClicked()"
-              aria-label="Edit..."
-              color="primary"
-              mat-icon-button>
+        (click)="editFriendBtnClicked()"
+        aria-label="Edit..."
+        color="primary"
+        mat-icon-button>
         <mat-icon>edit</mat-icon>
       </button>
       <button
-              (click)="navigateBack()"
-              aria-label="Close"
-              color="primary"
-              mat-icon-button>
+        (click)="navigateBack()"
+        aria-label="Close"
+        color="primary"
+        mat-icon-button>
         <mat-icon>close</mat-icon>
       </button>
     </div>
@@ -31,19 +31,19 @@
     <ng-container *ngIf="friend$ | async as friend">
       <div>
         <mat-label
-        ><h3 class="value">{{ friend.name }}</h3></mat-label
+          ><h3 class="value">{{ friend.name }}</h3></mat-label
         >
         <mat-label><h4 class="label">Full Name</h4></mat-label>
       </div>
       <div>
         <mat-label
-        ><h3 class="value">{{ friend.age }}</h3></mat-label
+          ><h3 class="value">{{ friend.age }}</h3></mat-label
         >
         <mat-label><h4 class="label">Age</h4></mat-label>
       </div>
       <div class="row-last">
         <mat-label
-        ><h3 class="value">{{ friend.weight }}</h3></mat-label
+          ><h3 class="value">{{ friend.weight }}</h3></mat-label
         >
         <mat-label><h4 class="label">Weight</h4></mat-label>
       </div>
@@ -55,7 +55,7 @@
 
       <ng-container *ngIf="children$ | async as children">
         <ng-container
-                *ngIf="children.length > 0 && (isChildrenLoading$ | async) !== true">
+          *ngIf="children.length > 0 && (isChildrenLoading$ | async) !== true">
           <h3>Friend's ages chart (D3 Demo)</h3>
           <div class="graphics-container">
             <app-d3-graphic [friendList]="children"></app-d3-graphic>

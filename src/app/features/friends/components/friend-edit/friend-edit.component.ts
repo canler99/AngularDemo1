@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import {
   BehaviorSubject,
   catchError,
@@ -14,13 +14,13 @@ import {
   take,
   tap,
 } from 'rxjs';
-import {Friend} from '../../models/friends.types';
-import {ActivatedRoute, Router} from '@angular/router';
-import {FriendsService} from '../../services/friends.service';
-import {FormBuilder, Validators} from '@angular/forms';
-import {map, shareReplay} from 'rxjs/operators';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {defaultEmptyFriend} from '../../models/friends.mocks';
+import { Friend } from '../../models/friends.types';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FriendsService } from '../../services/friends.service';
+import { FormBuilder, Validators } from '@angular/forms';
+import { map, shareReplay } from 'rxjs/operators';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { defaultEmptyFriend } from '../../models/friends.mocks';
 
 /**
  * Command structure to be used when handling add, delete, list events
@@ -42,16 +42,15 @@ export class FriendEditComponent implements OnInit {
    * Generates a new default friend object if no id was provided.
    */
   public friend$: Observable<any> = this.route.params.pipe(
-      switchMap(({id}) =>
-          !!id ? this.friendsService.getFriendById$(id) : of(defaultEmptyFriend)
-      ),
-      catchError(error =>
-          of(error).pipe(
-              tap(v => console.log('Entro5 con: ERROR 5', v)),
-              tap(() => this.router.navigate(['friends'])),
-              map(() => null)
-          )
+    switchMap(({ id }) =>
+      !!id ? this.friendsService.getFriendById$(id) : of(defaultEmptyFriend)
+    ),
+    catchError(error =>
+      of(error).pipe(
+        tap(() => this.router.navigate(['friends'])),
+        map(() => null)
       )
+    )
   );
 
   /**
@@ -59,7 +58,7 @@ export class FriendEditComponent implements OnInit {
    * @todo: properly translate (return translation keys to the template)
    */
   public tittle$: Observable<string> = this.friend$.pipe(
-      map((friend: Friend) => (!!friend?.id ? 'Edit' : 'Add'))
+    map((friend: Friend) => (!!friend?.id ? 'Edit' : 'Add'))
   );
 
   protected readonly MIN_AGE = 0;
@@ -105,42 +104,51 @@ export class FriendEditComponent implements OnInit {
    * @protected
    */
   protected _isFormSpinnerVisibleSubject = new BehaviorSubject<boolean>(false);
+  protected isFormSpinnerVisible$ =
+    this._isFormSpinnerVisibleSubject.asObservable();
+  /**
+   * Controls when the left list's spinner should be displayed
+   * @private
+   */
+  private _isLeftListSpinnerVisibleSubject = new BehaviorSubject<boolean>(true);
   /**
    * Keeps an in memory copy of the children (friends) of the current friend.
    * Responds to command to initialize (list), add or delete friends to that list.
    * @protected
    */
   public children$: Observable<Friend[]> = merge(
-      this.friend$.pipe(
-          take(1),
-          filter((friend: Friend) => !!friend),
-          switchMap((friend: Friend) =>
-              !!friend && !!friend?.id
-                  ? this.friendsService.getChildren$(friend)
-                  : of([])
-          ),
-          map((friends: Friend[]) => ({cmd: 'list', payload: friends} as Command))
+    this.friend$.pipe(
+      take(1),
+      filter((friend: Friend) => !!friend),
+      switchMap((friend: Friend) =>
+        !!friend && !!friend?.id
+          ? this.friendsService.getChildren$(friend)
+          : of([])
       ),
-      this.addChildSubject,
-      this.deleteChildSubject
+      map((friends: Friend[]) => ({ cmd: 'list', payload: friends } as Command))
+    ),
+    this.addChildSubject,
+    this.deleteChildSubject
   ).pipe(
-      tap((command: Command) => {
-        command?.cmd !== 'list' && this.editFriendForm.markAsDirty();
-        this._isLeftListSpinnerVisibleSubject.next(false);
-      }),
-      scan(
-          (acc: Friend[], value: Command): Friend[] =>
-              this.applyCommandToChildrenList(value, acc),
-          []
-      ),
-      map((v: Friend[]) => v),
-      shareReplay(1)
+    tap((command: Command) => {
+      command?.cmd !== 'list' && this.editFriendForm.markAsDirty();
+      this._isLeftListSpinnerVisibleSubject.next(false);
+    }),
+    scan(
+      (acc: Friend[], value: Command): Friend[] =>
+        this.applyCommandToChildrenList(value, acc),
+      []
+    ),
+    map((v: Friend[]) => v),
+    shareReplay(1)
   );
+  protected isLeftListSpinnerVisible$ =
+    this._isLeftListSpinnerVisibleSubject.asObservable();
   /**
-   * Controls when the left list's spinner should be displayed
+   * Controls when the right list's spinner should be displayed
    * @private
    */
-  private _isLeftListSpinnerVisibleSubject = new BehaviorSubject<boolean>(true);
+  private _isRightListSpinnerVisible = new BehaviorSubject<boolean>(true);
   /**
    * List of all available friends to connect with the current one. Filters out
    *  the current friend, and friends of the current friend
@@ -151,48 +159,37 @@ export class FriendEditComponent implements OnInit {
     this.friendsService.getFriendsList$(),
     this.children$,
   ]).pipe(
-      map(([curFriend, allFriends, curChildren]) =>
-          allFriends.filter(
-              (item: Friend) =>
-                  item.id !== curFriend.id &&
-                  !curChildren.some((child: Friend) => child.id === item.id)
-          )
-      ),
-      tap(() => this._isRightListSpinnerVisible.next(false)),
-      catchError(error =>
-          of(error).pipe(
-              tap(v => console.log('Entro ' + '112 con:ERROR 112')),
-              tap(({code, description}) => {
-                this._isRightListSpinnerVisible.next(false);
-                this.snackBar.open(
-                    `Error retrieving available friends: ${code}:${description}`,
-                    'DISMISS'
-                );
-              }),
-              map(() => [])
-          )
+    map(([curFriend, allFriends, curChildren]) =>
+      allFriends.filter(
+        (item: Friend) =>
+          item.id !== curFriend.id &&
+          !curChildren.some((child: Friend) => child.id === item.id)
       )
+    ),
+    tap(() => this._isRightListSpinnerVisible.next(false)),
+    catchError(error =>
+      of(error).pipe(
+        tap(({ code, description }) => {
+          this._isRightListSpinnerVisible.next(false);
+          this.snackBar.open(
+            `Error retrieving available friends: ${code}:${description}`,
+            'DISMISS'
+          );
+        }),
+        map(() => [])
+      )
+    )
   );
-  protected isFormSpinnerVisible$ =
-      this._isFormSpinnerVisibleSubject.asObservable();
-  /**
-   * Controls when the right list's spinner should be displayed
-   * @private
-   */
-  private _isRightListSpinnerVisible = new BehaviorSubject<boolean>(true);
-  protected isLeftListSpinnerVisible$ =
-      this._isLeftListSpinnerVisibleSubject.asObservable();
   protected isRightListSpinnerVisible$ =
-      this._isRightListSpinnerVisible.asObservable();
+    this._isRightListSpinnerVisible.asObservable();
 
   constructor(
-      private readonly router: Router,
-      private readonly route: ActivatedRoute,
-      private readonly formBuilder: FormBuilder,
-      private readonly friendsService: FriendsService,
-      private readonly snackBar: MatSnackBar
-  ) {
-  }
+    private readonly router: Router,
+    private readonly route: ActivatedRoute,
+    private readonly formBuilder: FormBuilder,
+    private readonly friendsService: FriendsService,
+    private readonly snackBar: MatSnackBar
+  ) {}
 
   /**
    * During initialization, if we are editing an existing friend, we convert the model to Form data
@@ -200,18 +197,18 @@ export class FriendEditComponent implements OnInit {
    */
   ngOnInit(): void {
     this.friend$
-        .pipe(
-            take(1),
-            filter(({id}) => !!id),
-            tap(friend => this.updateFriendFormDataFromModel(friend)),
-            catchError(error =>
-                of(error).pipe(
-                    tap(() => this.router.navigate(['friends'])),
-                    map(() => null)
-                )
-            )
+      .pipe(
+        take(1),
+        filter(({ id }) => !!id),
+        tap(friend => this.updateFriendFormDataFromModel(friend)),
+        catchError(error =>
+          of(error).pipe(
+            tap(() => this.router.navigate(['friends'])),
+            map(() => null)
+          )
         )
-        .subscribe();
+      )
+      .subscribe();
   }
 
   /**
@@ -220,7 +217,7 @@ export class FriendEditComponent implements OnInit {
    */
   updateFriendFormDataFromModel(friend: Friend) {
     if (!friend) {
-      throw {code: '004', description: 'Trying to update a null friend.'};
+      throw { code: '004', description: 'Trying to update a null friend.' };
     }
 
     this.editFriendForm.setValue({
@@ -239,14 +236,14 @@ export class FriendEditComponent implements OnInit {
     const formValue = this.editFriendForm.value;
 
     return this.children$.pipe(
-        take(1),
-        map((children: Friend[]) => ({
-          ...friend,
-          name: formValue.name ?? '',
-          age: +(formValue.age ?? 0),
-          weight: +(formValue.weight ?? 0),
-          friendIds: children.map((child: Friend) => child.id),
-        }))
+      take(1),
+      map((children: Friend[]) => ({
+        ...friend,
+        name: formValue.name ?? '',
+        age: +(formValue.age ?? 0),
+        weight: +(formValue.weight ?? 0),
+        friendIds: children.map((child: Friend) => child.id),
+      }))
     );
   }
 
@@ -268,39 +265,39 @@ export class FriendEditComponent implements OnInit {
     this.editFriendForm.disable();
 
     this.friend$
-        .pipe(
-            take(1),
-            switchMap((friend: Friend) =>
-                this.convertFriendFormDataToModel(friend)
-            ),
-            mergeMap((friend: Friend) =>
-                !!friend?.id
-                    ? this.friendsService.updateFriend$(friend)
-                    : this.friendsService.addFriend$(friend)
-            ),
-            tap((friend: Friend) => {
+      .pipe(
+        take(1),
+        switchMap((friend: Friend) =>
+          this.convertFriendFormDataToModel(friend)
+        ),
+        mergeMap((friend: Friend) =>
+          !!friend?.id
+            ? this.friendsService.updateFriend$(friend)
+            : this.friendsService.addFriend$(friend)
+        ),
+        tap((friend: Friend) => {
+          this._isFormSpinnerVisibleSubject.next(false);
+          this.snackBar.open('Changes were successfully saved!', undefined, {
+            duration: 3000,
+          });
+          this.navigateBack(friend);
+        }),
+        catchError(error =>
+          of(error).pipe(
+            // Better way could be displaying a user-friendly error message in an error banner at the top
+            // of the form
+            tap(({ code, description }) => {
+              this.snackBar.open(
+                `Error updating: ${code}:${description}`,
+                'DISMISS'
+              );
               this._isFormSpinnerVisibleSubject.next(false);
-              this.snackBar.open('Changes were successfully saved!', undefined, {
-                duration: 3000,
-              });
-              this.navigateBack(friend);
-            }),
-            catchError(error =>
-                of(error).pipe(
-                    // Better way could be displaying a user-friendly error message in an error banner at the top
-                    // of the form
-                    tap(({code, description}) => {
-                      this.snackBar.open(
-                          `Error updating: ${code}:${description}`,
-                          'DISMISS'
-                      );
-                      this._isFormSpinnerVisibleSubject.next(false);
-                      this.editFriendForm.enable();
-                    })
-                )
-            )
+              this.editFriendForm.enable();
+            })
+          )
         )
-        .subscribe();
+      )
+      .subscribe();
   }
 
   /**
@@ -316,15 +313,15 @@ export class FriendEditComponent implements OnInit {
    */
   navigateBack(friend?: Friend) {
     this.friend$
-        .pipe(
-            take(1),
-            tap(({id}) =>
-                !!id || !!friend?.id
-                    ? this.router.navigate(['friends', 'details', id || friend?.id])
-                    : this.router.navigate(['friends'])
-            )
+      .pipe(
+        take(1),
+        tap(({ id }) =>
+          !!id || !!friend?.id
+            ? this.router.navigate(['friends', 'details', id || friend?.id])
+            : this.router.navigate(['friends'])
         )
-        .subscribe();
+      )
+      .subscribe();
   }
 
   /**
@@ -332,7 +329,7 @@ export class FriendEditComponent implements OnInit {
    * @param friend: Child to delete
    */
   leftRemoveChildBtnClicked(friend: Friend) {
-    this.deleteChildSubject.next({cmd: 'delete', payload: friend});
+    this.deleteChildSubject.next({ cmd: 'delete', payload: friend });
   }
 
   /**
@@ -340,7 +337,7 @@ export class FriendEditComponent implements OnInit {
    * @param friend: Friend to add
    */
   rightDeleteChildBtnClicked(friend: Friend) {
-    this.addChildSubject.next({cmd: 'add', payload: friend});
+    this.addChildSubject.next({ cmd: 'add', payload: friend });
   }
 
   /**
@@ -350,8 +347,8 @@ export class FriendEditComponent implements OnInit {
    * @private
    */
   private applyCommandToChildrenList(
-      cmd: Command,
-      childrenList: Friend[]
+    cmd: Command,
+    childrenList: Friend[]
   ): Friend[] {
     switch (cmd.cmd) {
       case 'add':
@@ -359,7 +356,7 @@ export class FriendEditComponent implements OnInit {
         break;
       case 'delete':
         const index = (childrenList as Friend[]).findIndex(
-            (friend: Friend) => friend.id === (cmd?.payload as Friend)?.id
+          (friend: Friend) => friend.id === (cmd?.payload as Friend)?.id
         );
         if (index > -1) {
           (childrenList as Friend[]).splice(index, 1);

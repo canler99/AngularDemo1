@@ -1,9 +1,9 @@
-import {LayoutModule} from '@angular/cdk/layout';
-import {ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import { LayoutModule } from '@angular/cdk/layout';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
-import {NavigationComponent} from './navigation.component';
-import {MaterialCommonModule} from '../../material.module';
+import { NavigationComponent } from './navigation.component';
+import { MaterialCommonModule } from '../../material.module';
 
 describe('NavigationComponent', () => {
   let component: NavigationComponent;

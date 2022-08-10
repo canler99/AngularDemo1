@@ -1,4 +1,4 @@
-import {Friend} from '../models/friends.types';
+import { Friend } from '../models/friends.types';
 
 export const friendsFeatureKey = 'friendsState';
 

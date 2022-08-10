@@ -1,7 +1,7 @@
-import {friendsReducer} from './friends.reducers';
+import { friendsReducer } from './friends.reducers';
 import * as actions from '../actions/friends.actions';
-import {friendsFeatureKey} from '../friends-store.types';
-import {fiveFriendsList} from '../../models/friends.mocks';
+import { friendsFeatureKey } from '../friends-store.types';
+import { fiveFriendsList } from '../../models/friends.mocks';
 
 describe('Friend Reducers Tests', () => {
   let initialState: { [k: string]: any } = {};
@@ -19,7 +19,7 @@ describe('Friend Reducers Tests', () => {
       },
     };
 
-    const action = actions.loadFriendListNextPage({pageSize: 2});
+    const action = actions.loadFriendListNextPage({ pageSize: 2 });
     const res = friendsReducer(undefined, action);
     expect(res).toEqual(expected);
   });

@@ -1,8 +1,14 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output,} from '@angular/core';
-import {Observable, of, switchMap, take, tap, zip} from 'rxjs';
-import {Friend} from '../../models/friends.types';
-import {FriendsService} from '../../services/friends.service';
-import {ListContext} from '../../store/friends-store.types';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+} from '@angular/core';
+import { delay, Observable, of, switchMap, take, tap, zip } from 'rxjs';
+import { Friend } from '../../models/friends.types';
+import { FriendsService } from '../../services/friends.service';
+import { ListContext } from '../../store/friends-store.types';
 
 @Component({
   selector: 'app-friends-list',
@@ -29,32 +35,32 @@ export class FriendsListComponent implements OnInit {
    */
   protected listContext$ = this.friendsService.getFriendsListContext$();
 
-  constructor(protected readonly friendsService: FriendsService) {
-  }
+  constructor(protected readonly friendsService: FriendsService) {}
 
   ngOnInit(): void {
     // dispatch the action to load the first page only once
     this.listContext$
-        .pipe(
-            take(1),
-            tap(
-                ({currentPage}) =>
-                    currentPage === 0 && this.friendsService.loadFriendListNextPage()
-            )
+      .pipe(
+        take(1),
+        tap(
+          ({ currentPage }) =>
+            currentPage === 0 && this.friendsService.loadFriendListNextPage()
         )
-        .subscribe();
+      )
+      .subscribe();
 
     // Select the first element of the list when available
     zip([this.listContext$, this.friends$])
-        .pipe(
-            take(1),
-            tap(([listContext, friends]) => {
-              listContext.currentPage === 1 &&
-              friends?.length > 0 &&
-              this.listOptionClicked(friends[0]);
-            })
-        )
-        .subscribe();
+      .pipe(
+        //take(1),
+        delay(300),
+        tap(([listContext, friends]) => {
+          listContext.currentPage === 1 &&
+            friends?.length > 0 &&
+            this.listOptionClicked(friends[0]);
+        })
+      )
+      .subscribe();
   }
 
   /**
@@ -70,11 +76,11 @@ export class FriendsListComponent implements OnInit {
    */
   isNextPageButtonVisible(listContext: ListContext): boolean {
     return (
-        !!listContext &&
-        listContext.currentPage > 0 &&
-        listContext.currentPage < listContext.pageCount &&
-        !listContext?.loading &&
-        !listContext?.error
+      !!listContext &&
+      listContext.currentPage > 0 &&
+      listContext.currentPage < listContext.pageCount &&
+      !listContext?.loading &&
+      !listContext?.error
     );
   }
 

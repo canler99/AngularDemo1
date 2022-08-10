@@ -1,4 +1,4 @@
-import {Friend} from './friends.types';
+import { Friend } from './friends.types';
 
 /**
  * Default empty object declaration used for initialization when adding a new friend

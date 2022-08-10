@@ -1,17 +1,16 @@
-import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {MockStore, provideMockStore} from '@ngrx/store/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideMockStore } from '@ngrx/store/testing';
 
-import {FriendsListComponent} from './friends-list.component';
-import {MaterialCommonModule} from '../../../../material.module';
-import {FriendsService} from '../../services/friends.service';
-import {firstValueFrom, of} from 'rxjs';
-import {singleFriendList} from '../../models/friends.mocks';
+import { FriendsListComponent } from './friends-list.component';
+import { MaterialCommonModule } from '../../../../material.module';
+import { FriendsService } from '../../services/friends.service';
+import { firstValueFrom, of } from 'rxjs';
+import { singleFriendList } from '../../models/friends.mocks';
 
 describe('FriendsListComponent', () => {
   let component: FriendsListComponent;
   let fixture: ComponentFixture<FriendsListComponent>;
-  let store: MockStore;
-  const initialState = {friendState: {}};
+  const initialState = { friendState: {} };
   let mockFriendsService: any;
 
   beforeEach(async () => {
@@ -25,12 +24,12 @@ describe('FriendsListComponent', () => {
     ]);
 
     mockFriendsService.getFriendsListContext$.and.returnValue(
-        of({
-          currentPage: 0,
-          pageSize: 10,
-          loading: false,
-          pageCount: 0,
-        })
+      of({
+        currentPage: 0,
+        pageSize: 10,
+        loading: false,
+        pageCount: 0,
+      })
     );
 
     mockFriendsService.getFriendsList$.and.returnValue(of(singleFriendList));
@@ -39,7 +38,7 @@ describe('FriendsListComponent', () => {
       declarations: [FriendsListComponent],
       imports: [MaterialCommonModule],
       providers: [
-        provideMockStore({initialState}),
+        provideMockStore({ initialState }),
         {
           provide: FriendsService,
           useValue: mockFriendsService,

@@ -1,13 +1,13 @@
-import {ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {FriendDetailsComponent} from './friend-details.component';
-import {RouterTestingModule} from '@angular/router/testing';
-import {MaterialCommonModule} from '../../../../material.module';
-import {ActivatedRoute, Router} from '@angular/router';
-import {firstValueFrom, of, ReplaySubject} from 'rxjs';
-import {FriendsService} from '../../services/friends.service';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {singleFriend, twoFriendsList} from '../../models/friends.mocks';
+import { FriendDetailsComponent } from './friend-details.component';
+import { RouterTestingModule } from '@angular/router/testing';
+import { MaterialCommonModule } from '../../../../material.module';
+import { ActivatedRoute, Router } from '@angular/router';
+import { firstValueFrom, of, ReplaySubject } from 'rxjs';
+import { FriendsService } from '../../services/friends.service';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { singleFriend, twoFriendsList } from '../../models/friends.mocks';
 
 describe('FriendDetailsComponent', () => {
   let component: FriendDetailsComponent;
@@ -32,7 +32,7 @@ describe('FriendDetailsComponent', () => {
 
     mockFriendsService.getChildren$.and.returnValue(of(twoFriendsList));
 
-    routeParams.next({id: '1'});
+    routeParams.next({ id: '1' });
 
     await TestBed.configureTestingModule({
       declarations: [FriendDetailsComponent],

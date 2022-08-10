@@ -1,10 +1,14 @@
-import {TestBed} from '@angular/core/testing';
-import {MockStore, provideMockStore} from '@ngrx/store/testing';
+import { TestBed } from '@angular/core/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 
-import {FriendsService} from './friends.service';
-import {defaultEmptyFriend, fiveFriendsList, listContextObj,} from '../models/friends.mocks';
-import {firstValueFrom, take} from 'rxjs';
-import {friendsFeatureKey} from '../store/friends-store.types';
+import { FriendsService } from './friends.service';
+import {
+  defaultEmptyFriend,
+  fiveFriendsList,
+  listContextObj,
+} from '../models/friends.mocks';
+import { firstValueFrom, take } from 'rxjs';
+import { friendsFeatureKey } from '../store/friends-store.types';
 import * as actions from '../store/actions/friends.actions';
 
 describe('FriendsService', () => {
@@ -13,9 +17,9 @@ describe('FriendsService', () => {
   let initialState: { [k: string]: any } = {};
   initialState[friendsFeatureKey] = {};
 
-  const friendAdded = {...defaultEmptyFriend, id: '130'};
+  const friendAdded = { ...defaultEmptyFriend, id: '130' };
 
-  const stateWithData = {...initialState};
+  const stateWithData = { ...initialState };
   stateWithData[friendsFeatureKey] = {
     friends: fiveFriendsList,
     listContext: listContextObj,
@@ -23,7 +27,7 @@ describe('FriendsService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideMockStore({initialState})],
+      providers: [provideMockStore({ initialState })],
     });
 
     store = TestBed.inject(MockStore);
@@ -35,17 +39,17 @@ describe('FriendsService', () => {
   });
 
   it('should return the list of friends from the store', async () => {
-    store.setState({...stateWithData});
+    store.setState({ ...stateWithData });
 
     const res = await firstValueFrom(service.getFriendsList$().pipe(take(1)));
     expect(res).toEqual(fiveFriendsList);
   });
 
   it('should return the list context from the store', async () => {
-    store.setState({...stateWithData});
+    store.setState({ ...stateWithData });
 
     const res = await firstValueFrom(
-        service.getFriendsListContext$().pipe(take(1))
+      service.getFriendsListContext$().pipe(take(1))
     );
     expect(res).toEqual(listContextObj);
   });
@@ -59,11 +63,11 @@ describe('FriendsService', () => {
   describe('When adding a new friend', () => {
     it('should call the api service and dispatch an action', async () => {
       const spyDispatchAdd = spyOn(store, 'dispatch');
-      store.setState({...stateWithData});
+      store.setState({ ...stateWithData });
       const res = await firstValueFrom(service.addFriend$(defaultEmptyFriend));
       expect(res).toEqual(friendAdded);
       expect(spyDispatchAdd).toHaveBeenCalledWith(
-          actions.friendAdded({friend: friendAdded})
+        actions.friendAdded({ friend: friendAdded })
       );
     });
   });

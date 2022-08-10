@@ -1,11 +1,11 @@
-import {Injectable} from '@angular/core';
-import {Store} from '@ngrx/store';
-import {FriendsApiService} from './friends-api.service';
-import {Observable, tap} from 'rxjs';
-import {Friend} from '../models/friends.types';
+import { Injectable } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { FriendsApiService } from './friends-api.service';
+import { Observable, tap } from 'rxjs';
+import { Friend } from '../models/friends.types';
 import * as actions from '../store/actions/friends.actions';
 import * as selectors from '../store/selectors/friends.selectors';
-import {ListContext} from '../store/friends-store.types';
+import { ListContext } from '../store/friends-store.types';
 
 @Injectable({
   providedIn: 'root',
@@ -16,10 +16,9 @@ import {ListContext} from '../store/friends-store.types';
  */
 export class FriendsService {
   constructor(
-      private readonly friendsApiService: FriendsApiService,
-      private readonly store: Store
-  ) {
-  }
+    private readonly friendsApiService: FriendsApiService,
+    private readonly store: Store
+  ) {}
 
   /**
    * Returns the main list of friends from the store
@@ -41,7 +40,7 @@ export class FriendsService {
    * @param pageSize
    */
   loadFriendListNextPage(pageSize: number = 10) {
-    this.store.dispatch(actions.loadFriendListNextPage({pageSize}));
+    this.store.dispatch(actions.loadFriendListNextPage({ pageSize }));
   }
 
   /**
@@ -49,7 +48,7 @@ export class FriendsService {
    * @param friendId
    */
   getFriendById$(friendId: string): Observable<Friend> {
-    return this.store.select(selectors.selectFriend, {friendId});
+    return this.store.select(selectors.selectFriend, { friendId });
   }
 
   /**
@@ -58,10 +57,10 @@ export class FriendsService {
    */
   addFriend$(newFriend: Friend): Observable<Friend> {
     return this.friendsApiService
-        .addFriend$(newFriend)
-        .pipe(
-            tap(friend => this.store.dispatch(actions.friendAdded({friend})))
-        );
+      .addFriend$(newFriend)
+      .pipe(
+        tap(friend => this.store.dispatch(actions.friendAdded({ friend })))
+      );
   }
 
   /**
@@ -70,8 +69,8 @@ export class FriendsService {
    */
   updateFriend$(friend: Friend): Observable<Friend> {
     return this.friendsApiService
-        .updateFriend$(friend)
-        .pipe(tap(() => this.store.dispatch(actions.friendUpdated({friend}))));
+      .updateFriend$(friend)
+      .pipe(tap(() => this.store.dispatch(actions.friendUpdated({ friend }))));
   }
 
   /**
@@ -80,8 +79,8 @@ export class FriendsService {
    */
   deleteFriend$(friend: Friend): Observable<boolean> {
     return this.friendsApiService
-        .deleteFriend$(friend)
-        .pipe(tap(() => this.store.dispatch(actions.friendDeleted({friend}))));
+      .deleteFriend$(friend)
+      .pipe(tap(() => this.store.dispatch(actions.friendDeleted({ friend }))));
   }
 
   /**

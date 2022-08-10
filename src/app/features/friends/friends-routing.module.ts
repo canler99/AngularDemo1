@@ -1,8 +1,8 @@
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
-import {FriendsPageComponent} from './pages/friends-page/friends-page.component';
-import {FriendDetailsComponent} from './components/friend-details/friend-details.component';
-import {FriendEditComponent} from './components/friend-edit/friend-edit.component';
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { FriendsPageComponent } from './pages/friends-page/friends-page.component';
+import { FriendDetailsComponent } from './components/friend-details/friend-details.component';
+import { FriendEditComponent } from './components/friend-edit/friend-edit.component';
 
 const routes: Routes = [
   {
@@ -30,5 +30,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class FriendsRoutingModule {
-}
+export class FriendsRoutingModule {}

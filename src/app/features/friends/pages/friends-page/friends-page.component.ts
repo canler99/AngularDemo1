@@ -1,7 +1,7 @@
-import {Component, OnInit} from '@angular/core';
-import {TitleService} from '../../../../services/title-service/title.service';
-import {ActivatedRoute, Router} from '@angular/router';
-import {Friend} from '../../models/friends.types';
+import { Component, OnInit } from '@angular/core';
+import { TitleService } from '../../../../services/title-service/title.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Friend } from '../../models/friends.types';
 
 @Component({
   selector: 'app-friends-page',
@@ -10,11 +10,10 @@ import {Friend} from '../../models/friends.types';
 })
 export class FriendsPageComponent implements OnInit {
   constructor(
-      private readonly titleService: TitleService,
-      private readonly router: Router,
-      private readonly route: ActivatedRoute
-  ) {
-  }
+    private readonly titleService: TitleService,
+    private readonly router: Router,
+    private readonly route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
     this.titleService.title = 'Friends';
@@ -22,10 +21,10 @@ export class FriendsPageComponent implements OnInit {
 
   friendSelectedEvent(selectedFriend: Friend | {}) {
     this.router
-        .navigate(['details', (selectedFriend as Friend)?.id], {
-          relativeTo: this.route,
-        })
-        .then();
+      .navigate(['details', (selectedFriend as Friend)?.id], {
+        relativeTo: this.route,
+      })
+      .then();
   }
 
   onAddBtnClicked() {

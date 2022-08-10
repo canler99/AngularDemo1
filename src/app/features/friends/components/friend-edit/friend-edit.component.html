@@ -5,11 +5,11 @@
         <h2>{{ tittle$ | async }}</h2>
       </mat-card-title>
       <button
-              (click)="closeBtnClicked()"
-              aria-label="Close"
-              color="primary"
-              mat-icon-button
-              type="button">
+        (click)="closeBtnClicked()"
+        aria-label="Close"
+        color="primary"
+        mat-icon-button
+        type="button">
         <mat-icon>close</mat-icon>
       </button>
     </mat-card-header>
@@ -18,9 +18,9 @@
       <div class="row row-large">
         <div class="col">
           <mat-form-field class="full-width">
-            <input formControlName="name" matInput placeholder="Name"/>
+            <input formControlName="name" matInput placeholder="Name" />
             <mat-error
-                    *ngIf="editFriendForm.controls['name'].hasError('required')">
+              *ngIf="editFriendForm.controls['name'].hasError('required')">
               First name is <strong>required</strong>
             </mat-error>
           </mat-form-field>
@@ -30,13 +30,13 @@
       <div class="row row-small">
         <div class="col">
           <mat-form-field class="full-width">
-            <input formControlName="age" matInput placeholder="Age"/>
+            <input formControlName="age" matInput placeholder="Age" />
             <mat-error
-                    *ngIf="editFriendForm.controls['age'].hasError('required')">
+              *ngIf="editFriendForm.controls['age'].hasError('required')">
               Age is <strong>required</strong>
             </mat-error>
             <mat-error
-                    *ngIf="
+              *ngIf="
                 editFriendForm.controls['age'].hasError('min') ||
                 editFriendForm.controls['age'].hasError('max')
               ">
@@ -49,13 +49,13 @@
       <div class="row row-small row-last">
         <div class="col">
           <mat-form-field class="full-width">
-            <input formControlName="weight" matInput placeholder="Weight"/>
+            <input formControlName="weight" matInput placeholder="Weight" />
             <mat-error
-                    *ngIf="editFriendForm.controls['weight'].hasError('required')">
+              *ngIf="editFriendForm.controls['weight'].hasError('required')">
               Weight name is <strong>required</strong>
             </mat-error>
             <mat-error
-                    *ngIf="
+              *ngIf="
                 editFriendForm.controls['age'].hasError('min') ||
                 editFriendForm.controls['age'].hasError('max')
               ">
@@ -73,8 +73,8 @@
                 <mat-list-item>
                   <div class="list-item">{{ child.name }}</div>
                   <button
-                          (click)="leftRemoveChildBtnClicked(child)"
-                          mat-icon-button>
+                    (click)="leftRemoveChildBtnClicked(child)"
+                    mat-icon-button>
                     <mat-icon class="mat-24">arrow_forward</mat-icon>
                   </button>
                 </mat-list-item>
@@ -85,8 +85,8 @@
               </mat-list-item>
             </ng-container>
             <mat-list-item
-                    *ngIf="(isLeftListSpinnerVisible$ | async) === true"
-                    class="list-control-centering-container">
+              *ngIf="(isLeftListSpinnerVisible$ | async) === true"
+              class="list-control-centering-container">
               <mat-spinner diameter="20"></mat-spinner>
             </mat-list-item>
           </mat-list>
@@ -101,8 +101,8 @@
                 <mat-list-item>
                   <div class="list-item">{{ friend.name }}</div>
                   <button
-                          (click)="rightDeleteChildBtnClicked(friend)"
-                          mat-icon-button>
+                    (click)="rightDeleteChildBtnClicked(friend)"
+                    mat-icon-button>
                     <mat-icon class="mat-24">arrow_back</mat-icon>
                   </button>
                 </mat-list-item>
@@ -113,8 +113,8 @@
               </mat-list-item>
             </ng-container>
             <mat-list-item
-                    *ngIf="(isRightListSpinnerVisible$ | async) === true"
-                    class="list-control-centering-container">
+              *ngIf="(isRightListSpinnerVisible$ | async) === true"
+              class="list-control-centering-container">
               <mat-spinner diameter="20"></mat-spinner>
             </mat-list-item>
           </mat-list>
@@ -124,16 +124,16 @@
     <mat-card-actions>
       <div class="button-spinner-container">
         <mat-spinner
-                *ngIf="(isFormSpinnerVisible$ | async) === true; else showButton"
-                diameter="20">
+          *ngIf="(isFormSpinnerVisible$ | async) === true; else showButton"
+          diameter="20">
         </mat-spinner>
         <ng-template #showButton>
           <button
-                  [disabled]="editFriendForm.pristine"
-                  class="submit-button"
-                  color="primary"
-                  mat-raised-button
-                  type="submit">
+            [disabled]="editFriendForm.pristine"
+            class="submit-button"
+            color="primary"
+            mat-raised-button
+            type="submit">
             Submit
           </button>
         </ng-template>

@@ -1,5 +1,5 @@
-import {selectFriend} from './friends.selectors';
-import {fiveFriendsList, friend2} from '../../models/friends.mocks';
+import { selectFriend } from './friends.selectors';
+import { fiveFriendsList, friend2 } from '../../models/friends.mocks';
 
 describe('Friend Selectors Tests', () => {
   describe('When selecting a friend using selectFriend selector', () => {

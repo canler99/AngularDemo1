@@ -1,14 +1,14 @@
-import {ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {FriendEditComponent} from './friend-edit.component';
-import {RouterTestingModule} from '@angular/router/testing';
-import {ReactiveFormsModule} from '@angular/forms';
-import {MaterialCommonModule} from '../../../../material.module';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {FriendsService} from '../../services/friends.service';
-import {ActivatedRoute, Router} from '@angular/router';
-import {firstValueFrom, of, ReplaySubject, zip} from 'rxjs';
-import {Friend} from '../../models/friends.types';
+import { FriendEditComponent } from './friend-edit.component';
+import { RouterTestingModule } from '@angular/router/testing';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MaterialCommonModule } from '../../../../material.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FriendsService } from '../../services/friends.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { firstValueFrom, of, ReplaySubject, zip } from 'rxjs';
+import { Friend } from '../../models/friends.types';
 import {
   defaultEmptyFriend,
   fiveFriendsList,
@@ -77,9 +77,9 @@ describe('FriendEditComponent', () => {
 
   describe('When id param is present in the route', () => {
     it('should return the corresponding friend and Edit tittle', async () => {
-      routeParams.next({id: '1'});
+      routeParams.next({ id: '1' });
       mockFriendsService.getFriendById$.and.returnValue(
-          of({id: '1'} as Friend)
+        of({ id: '1' } as Friend)
       );
 
       fixture = TestBed.createComponent(FriendEditComponent);
@@ -87,10 +87,10 @@ describe('FriendEditComponent', () => {
       fixture.detectChanges();
 
       const res = await firstValueFrom(
-          zip([component.friend$, component.tittle$])
+        zip([component.friend$, component.tittle$])
       );
 
-      expect(res[0]).toEqual({id: '1'} as any);
+      expect(res[0]).toEqual({ id: '1' } as any);
       expect(res[1]).toEqual('Edit');
       expect(mockFriendsService.getFriendById$).toHaveBeenCalledWith('1');
     });
@@ -103,7 +103,7 @@ describe('FriendEditComponent', () => {
       component = fixture.componentInstance;
       fixture.detectChanges();
       const res = await firstValueFrom(
-          zip([component.friend$, component.tittle$])
+        zip([component.friend$, component.tittle$])
       );
       expect(res[0]).toEqual(defaultEmptyFriend);
       expect(res[1]).toEqual('Add');
@@ -114,7 +114,7 @@ describe('FriendEditComponent', () => {
 
   describe('When retrieving the list of available friends', () => {
     it('current item and its children should be excluded', async () => {
-      routeParams.next({id: '1'});
+      routeParams.next({ id: '1' });
 
       mockFriendsService.getFriendById$.and.returnValue(of(singleFriend));
 

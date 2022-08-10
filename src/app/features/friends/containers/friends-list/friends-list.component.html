@@ -8,7 +8,7 @@
         <mat-divider></mat-divider>
       </ng-container>
       <mat-list-item
-              *ngIf="!((friends?.length ?? 0) > 0) && !listContext?.loading">
+        *ngIf="!((friends?.length ?? 0) > 0) && !listContext?.loading">
         <div class="list-item">List is empty</div>
       </mat-list-item>
     </ng-container>
@@ -21,9 +21,9 @@
     <ng-container *ngIf="isNextPageButtonVisible(listContext)">
       <div class="list-control-centering-container">
         <button
-                (click)="loadNextPageClicked()"
-                color="primary"
-                mat-raised-button>
+          (click)="loadNextPageClicked()"
+          color="primary"
+          mat-raised-button>
           Load more...
         </button>
       </div>
